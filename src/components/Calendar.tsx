@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import ReservationDetail from './ReservationDetail'; // 예약 상세 정보를 보여줄 컴포넌트
-// TODO: Git ignore 추가하기
+"use client";
+import React, { useState } from "react";
+import ReservationDetail from "./ReservationDetail"; // 예약 상세 정보를 보여줄 컴포넌트
 const Calendar: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
@@ -65,7 +65,7 @@ const Calendar: React.FC = () => {
 
       <div className="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
         <div className="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold leading-6 text-gray-700 lg:flex-none">
-          {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, idx) => (
+          {["M", "T", "W", "T", "F", "S", "S"].map((day, idx) => (
             <div key={idx} className="flex justify-center bg-white py-2">
               <span>{day}</span>
             </div>
@@ -86,7 +86,10 @@ const Calendar: React.FC = () => {
       </div>
 
       {selectedDate && (
-        <ReservationDetail date={selectedDate} onClose={() => setSelectedDate(null)} />
+        <ReservationDetail
+          date={selectedDate}
+          onClose={() => setSelectedDate(null)}
+        />
       )}
     </div>
   );
