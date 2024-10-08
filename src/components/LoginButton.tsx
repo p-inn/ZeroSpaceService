@@ -1,7 +1,7 @@
 // components/LoginButton.tsx
 import React, { useState } from "react";
 import { useRecoilState } from "recoil";
-import { userState } from "../../recoil/atoms";
+import { userState } from "../recoil/atoms";
 
 const LoginButton = () => {
   const [user, setUser] = useRecoilState(userState);
