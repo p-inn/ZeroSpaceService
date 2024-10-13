@@ -227,3 +227,75 @@ select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
   -webkit-text-fill-color: #fff;
 }
+
+/* Calendar CSS */
+.fc-day-sun a { /* 일요일 컬러 */
+  color: red !important;
+}
+
+.fc-day-sat a { /* 토요일 컬러 */
+  color: blue !important;
+}
+.fc .fc-daygrid-day-top {
+  flex-direction: row !important;
+  height: 30px !important;
+  margin-bottom: 3px !important;
+  padding-left: 2px;
+}
+
+.fc-toolbar {
+  display: flex;
+  justify-content: space-between;
+}
+.fc-toolbar-title{
+  font-weight: bold;
+}
+.fc-toolbar .fc-toolbar-chunk {
+  display: flex;
+  gap: 8px; /* 툴바의 요소 간 간격 추가 */
+}
+
+.fc-today-button {
+  width: 60px;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  border: none !important;
+  background-color: #eaeaea !important;
+  color: #393939 !important;
+}
+
+.fc-button:hover {
+  background-color: #d7d7d7 !important;
+  border: none !important;
+}
+
+/* .fc-button-primary {
+  background-color: #3b82f6;
+  color: white;
+  border: none !important;
+} */
+
+.fc-button-group {
+  display: flex;
+  justify-content: space-around;
+  gap: 5px;
+}
+.fc-prev-button, .fc-next-button {
+  background-color: #FFFFFF !important;
+  color: #393939 !important;
+  border: none !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  display: flex !important;   
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 0 !important;
+}
+
+.fc-prev-button:focus, .fc-next-button:focus,
+.fc-prev-button:active, .fc-next-button:active,
+.fc-prev-button:focus-visible, .fc-next-button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
