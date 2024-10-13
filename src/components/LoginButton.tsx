@@ -1,4 +1,4 @@
-// components/LoginButton.tsx
+'use client';
 import React, { useState } from "react";
 import { useRecoilState } from "recoil";
 import { userState } from "../recoil/atoms";
