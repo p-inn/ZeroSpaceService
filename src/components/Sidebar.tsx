@@ -7,7 +7,7 @@ interface SidebarProps {
   toggleSidebar: (content: string) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, content, toggleSidebar }) => {
+const RightSidebar: React.FC<SidebarProps> = ({ isOpen, content, toggleSidebar }) => {
   return (
     <div
       className={`fixed top-0 right-0 h-full bg-white shadow-lg z-40 transition-transform duration-300 transform ${
@@ -86,4 +86,4 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, content, toggleSidebar }) => 
   );
 };
 
-export default Sidebar;
+export default RightSidebar;
