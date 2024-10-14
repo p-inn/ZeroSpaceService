@@ -35,7 +35,7 @@ export default function RootLayout({
         <Header />
         <main
           className={
-            'pt-24 px-5 w-full max-w-xl mx-auto md:px-1.5 md:max-w-[1000px] min-h-[calc(100vh-140px)]'
+            'pt-24 px-5 w-11/12 mx-auto md:px-1.5 md:min-w-[1000px] min-h-[calc(100vh-140px)]'
           }
         >
           {/* RecoilRoot와 같은 클라이언트 상태 관리는 클라이언트 컴포넌트로 이동 */}

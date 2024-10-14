@@ -242,6 +242,11 @@ select:-webkit-autofill:focus {
   margin-bottom: 3px !important;
   padding-left: 2px;
 }
+/* 
+.fc .fc-daygrid-day-frame {
+  width: 150px !important;
+  height: 150px !important;
+} */
 
 .fc-toolbar {
   display: flex;
@@ -299,3 +304,5 @@ select:-webkit-autofill:focus {
   outline: none !important;
   box-shadow: none !important;
 }
+
+

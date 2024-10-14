@@ -1,10 +1,12 @@
 import React from 'react';
 import Calendar from '@/components/Calendar';
 
+
 const calendarPage = () => {
   return (
     <div>
       <Calendar />
+
     </div>
   );
 };
