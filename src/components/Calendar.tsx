@@ -3,11 +3,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import koLocale from '@fullcalendar/core/locales/ko';
-import Sidebar from './Sidebar';
+import RightSidebar from './Sidebar';
+import LeftSidebar from './LeftSideBar';
 
 
 const Calendar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false); 
   const [sidebarContent, setSidebarContent] = useState('default');
     const calendarRef = useRef<FullCalendar|null>(null); // FullCalendar 참조용
 
@@ -15,6 +17,10 @@ const Calendar = () => {
     setIsSidebarOpen(!isSidebarOpen);
     setSidebarContent(content); 
   };
+    // 왼쪽 사이드바 토글
+    const toggleLeftSidebar = () => {
+      setIsLeftSidebarOpen(!isLeftSidebarOpen);
+    };
 
   const closeSidebar = () => {
     setIsSidebarOpen(false);
@@ -28,12 +34,21 @@ const Calendar = () => {
         calendarApi.updateSize(); // 사이드바 열리고 닫힌 후 크기 업데이트
       }, 300); // 애니메이션과 함께 업데이트
     }
-  }, [isSidebarOpen]);  // 사이드바 상태가 변경될 때마다 호출
+  }, [isSidebarOpen,isLeftSidebarOpen]);  // 사이드바 상태가 변경될 때마다 호출
 
 
   return (
     <div className='flex h-screen w-full'>
-      <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-[calc(100%-256px)]' : 'w-full'}`}>
+      <LeftSidebar isOpen={isLeftSidebarOpen} toggleSidebar={toggleLeftSidebar} />
+      <div
+        className={`transition-all duration-300 ${
+          isSidebarOpen || isLeftSidebarOpen ? 'w-[calc(100%-256px)]' : 'w-full'
+        }`}
+        style={{
+          marginLeft: isLeftSidebarOpen ? '256px' : '0',
+          marginRight: isSidebarOpen ? '256px' : '0',
+        }} // 왼쪽, 오른쪽 사이드바에 따라 마진 설정
+      >
       <FullCalendar
         ref={calendarRef}
         plugins={[ dayGridPlugin ]}
@@ -54,7 +69,7 @@ const Calendar = () => {
       />
       </div>
       {/* 사이드바 컴포넌트 사용 */}
-      <Sidebar isOpen={isSidebarOpen} content={sidebarContent} closeSidebar={closeSidebar} toggleSidebar={toggleSidebar}/>
+      <RightSidebar isOpen={isSidebarOpen} content={sidebarContent} toggleSidebar={toggleSidebar}/>
 
   </div>
   );
