@@ -3,7 +3,7 @@ import React from 'react';
 
 export default function Header() {
   return (
-    <header className="fixed top-0 w-full bg-transparent py-3 px-3 border shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]">
+    <header className="fixed top-0 w-full bg-white py-3 px-3 border shadow-lg z-50">
       <div className="mx-auto px-5 md:px-0">
         <div className="flex items-center justify-start h-12">
           <img src='/assets/ZERO SPACE.png' alt='제로스페이스로고' className='mx-4'/>
