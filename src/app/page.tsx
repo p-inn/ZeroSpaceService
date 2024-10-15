@@ -1,8 +1,11 @@
 import MainLayout from "./main/page";
 
 const Home = () => {
+
   return (
-    <MainLayout />
+    <>
+      <MainLayout />
+    </> 
   )
 };
 

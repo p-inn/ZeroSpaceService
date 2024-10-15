@@ -227,12 +227,19 @@ select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
   -webkit-text-fill-color: #fff;
 }
-
+:root {
+  --fc-border-color:white;
+}
 /* Calendar CSS */
+.fc {
+  border:none !important;
+}
 .fc-day-sun a { /* 일요일 컬러 */
   color: red !important;
 }
-
+#calendar-container {
+  border:none !important;
+}
 .fc-day-sat a { /* 토요일 컬러 */
   color: blue !important;
 }
@@ -242,11 +249,27 @@ select:-webkit-autofill:focus {
   margin-bottom: 3px !important;
   padding-left: 2px;
 }
-/* 
-.fc .fc-daygrid-day-frame {
-  width: 150px !important;
-  height: 150px !important;
-} */
+
+ /* FullCalendar 날짜 셀 테두리 제거 */
+  .fc-daygrid-day {
+  border: none !important;
+}
+
+/* FullCalendar 전체 달력 테두리 제거 */
+.fc-scrollgrid {
+  border: none !important;
+}
+
+/* 이벤트의 테두리 제거 */
+.fc-event {
+  border: none !important;
+}
+
+/* 날짜 헤더 (일, 월, 화 ...)의 테두리 제거 */
+.fc-col-header-cell {
+  border: none !important;
+}
+
 
 .fc-toolbar {
   display: flex;
@@ -305,4 +328,11 @@ select:-webkit-autofill:focus {
   box-shadow: none !important;
 }
 
+/* CalendarOne 스타일 */
+.calendar-small-style .fc-daygrid-day {
+  border:none !important;
+}
 
+.calendar-small-style .fc-toolbar-title {
+  color: #0000ff;
+}
