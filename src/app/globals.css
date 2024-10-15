@@ -228,19 +228,21 @@ select:-webkit-autofill:focus {
   -webkit-text-fill-color: #fff;
 }
 :root {
-  --fc-border-color:white;
+  --fc-border-color: white;
 }
 /* Calendar CSS */
 .fc {
-  border:none !important;
+  border: none !important;
 }
-.fc-day-sun a { /* 일요일 컬러 */
+.fc-day-sun a {
+  /* 일요일 컬러 */
   color: red !important;
 }
 #calendar-container {
-  border:none !important;
+  border: none !important;
 }
-.fc-day-sat a { /* 토요일 컬러 */
+.fc-day-sat a {
+  /* 토요일 컬러 */
   color: blue !important;
 }
 .fc .fc-daygrid-day-top {
@@ -250,8 +252,8 @@ select:-webkit-autofill:focus {
   padding-left: 2px;
 }
 
- /* FullCalendar 날짜 셀 테두리 제거 */
-  .fc-daygrid-day {
+/* FullCalendar 날짜 셀 테두리 제거 */
+.fc-daygrid-day {
   border: none !important;
 }
 
@@ -270,12 +272,11 @@ select:-webkit-autofill:focus {
   border: none !important;
 }
 
-
 .fc-toolbar {
   display: flex;
   justify-content: space-between;
 }
-.fc-toolbar-title{
+.fc-toolbar-title {
   font-weight: bold;
 }
 .fc-toolbar .fc-toolbar-chunk {
@@ -308,29 +309,33 @@ select:-webkit-autofill:focus {
   justify-content: space-around;
   gap: 5px;
 }
-.fc-prev-button, .fc-next-button {
-  background-color: #FFFFFF !important;
+.fc-prev-button,
+.fc-next-button {
+  background-color: #ffffff !important;
   color: #393939 !important;
   border: none !important;
   width: 40px !important;
   height: 40px !important;
   border-radius: 50% !important;
-  display: flex !important;   
+  display: flex !important;
   justify-content: center !important;
   align-items: center !important;
   padding: 0 !important;
 }
 
-.fc-prev-button:focus, .fc-next-button:focus,
-.fc-prev-button:active, .fc-next-button:active,
-.fc-prev-button:focus-visible, .fc-next-button:focus-visible {
+.fc-prev-button:focus,
+.fc-next-button:focus,
+.fc-prev-button:active,
+.fc-next-button:active,
+.fc-prev-button:focus-visible,
+.fc-next-button:focus-visible {
   outline: none !important;
   box-shadow: none !important;
 }
 
 /* CalendarOne 스타일 */
 .calendar-small-style .fc-daygrid-day {
-  border:none !important;
+  border: none !important;
 }
 
 .calendar-small-style .fc-toolbar-title {
