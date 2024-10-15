@@ -6,7 +6,6 @@ const calendarPage = () => {
   return (
     <div>
       <Calendar />
-
     </div>
   );
 };
