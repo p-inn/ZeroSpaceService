@@ -1,5 +1,6 @@
 import React from 'react';
 import { BsChevronRight } from "react-icons/bs";
+import KakaoLoginButton from './KakaoLogin';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -41,7 +42,7 @@ const RightSidebar: React.FC<SidebarProps> = ({ isOpen, content, toggleSidebar }
         {content === 'kakaoLogin' && (
           <div>
             <h2 className="text-2xl font-bold mb-6">계정 관리</h2>
-            <button className="btn bg-yellow-300 text-black px-4 py-2 rounded-lg w-full text-lg font-semibold mb-6">카카오톡으로 3초만에 로그인</button>
+            <KakaoLoginButton />
             <span className='text-gray-500 text-sm'>회원가입 시 제로스페이스의 이용약관 / 개인정보처리 방침에 동의하게 됩니다.</span>
           </div>
         )}
