@@ -1,97 +1,77 @@
-"use client";
-import React, { useState } from "react";
-import ReservationDetail from "./ReservationDetail"; // 예약 상세 정보를 보여줄 컴포넌트
-const Calendar: React.FC = () => {
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+'use client';
+import React, { useEffect, useRef, useState } from 'react';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import koLocale from '@fullcalendar/core/locales/ko';
+import RightSidebar from './Sidebar';
+import LeftSidebar from './LeftSideBar';
 
-  const handleDateClick = (date: string) => {
-    setSelectedDate(date); // 날짜 클릭 시 선택된 날짜를 저장
+
+const Calendar = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false); 
+  const [sidebarContent, setSidebarContent] = useState('default');
+    const calendarRef = useRef<FullCalendar|null>(null); // FullCalendar 참조용
+
+  const toggleSidebar = (content: string) => {
+    setIsSidebarOpen(!isSidebarOpen);
+    setSidebarContent(content); 
+  };
+    // 왼쪽 사이드바 토글
+    const toggleLeftSidebar = () => {
+      setIsLeftSidebarOpen(!isLeftSidebarOpen);
+    };
+
+  const closeSidebar = () => {
+    setIsSidebarOpen(false);
   };
 
+  // 사이드바가 열리거나 닫힐 때 FullCalendar 크기 업데이트
+  useEffect(() => {
+    if (calendarRef.current) {
+      const calendarApi = calendarRef.current.getApi();
+      setTimeout(() => {
+        calendarApi.updateSize(); // 사이드바 열리고 닫힌 후 크기 업데이트
+      }, 300); // 애니메이션과 함께 업데이트
+    }
+  }, [isSidebarOpen,isLeftSidebarOpen]);  // 사이드바 상태가 변경될 때마다 호출
+
+
   return (
-    <div className="lg:flex lg:h-full lg:flex-col">
-      <header className="flex items-center justify-between border-b border-gray-200 px-6 py-4 lg:flex-none">
-        <h1 className="text-base font-semibold leading-6 text-gray-900">
-          <time dateTime="2024-09">September 2024</time>
-        </h1>
-        <div className="flex items-center">
-          <div className="relative flex items-center rounded-md bg-white shadow-sm md:items-stretch">
-            <button
-              type="button"
-              className="flex h-9 w-12 items-center justify-center rounded-l-md border-y border-l border-gray-300 pr-1 text-gray-400 hover:text-gray-500 focus:relative md:w-9 md:pr-0 md:hover:bg-gray-50"
-            >
-              <span className="sr-only">Previous month</span>
-              <svg
-                className="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
-            <button
-              type="button"
-              className="hidden border-y border-gray-300 px-3.5 text-sm font-semibold text-gray-900 hover:bg-gray-50 focus:relative md:block"
-            >
-              Today
-            </button>
-            <span className="relative -mx-px h-5 w-px bg-gray-300 md:hidden"></span>
-            <button
-              type="button"
-              className="flex h-9 w-12 items-center justify-center rounded-r-md border-y border-r border-gray-300 pl-1 text-gray-400 hover:text-gray-500 focus:relative md:w-9 md:pl-0 md:hover:bg-gray-50"
-            >
-              <span className="sr-only">Next month</span>
-              <svg
-                className="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <div className="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
-        <div className="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold leading-6 text-gray-700 lg:flex-none">
-          {["M", "T", "W", "T", "F", "S", "S"].map((day, idx) => (
-            <div key={idx} className="flex justify-center bg-white py-2">
-              <span>{day}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-7 gap-px bg-gray-200 text-xs text-gray-700 lg:flex-auto">
-          {[...Array(30)].map((_, index) => (
-            <button
-              key={index}
-              className="relative bg-white px-3 py-2 hover:bg-gray-100"
-              onClick={() => handleDateClick(`2024-09-${index + 1}`)}
-            >
-              <time dateTime={`2024-09-${index + 1}`}>{index + 1}</time>
-            </button>
-          ))}
-        </div>
+    <div className='flex h-screen w-full'>
+      <LeftSidebar isOpen={isLeftSidebarOpen} toggleSidebar={toggleLeftSidebar} />
+      <div
+        className={`transition-all duration-300 ${
+          isSidebarOpen || isLeftSidebarOpen ? 'w-[calc(100%-256px)]' : 'w-full'
+        }`}
+        style={{
+          marginLeft: isLeftSidebarOpen ? '256px' : '0',
+          marginRight: isSidebarOpen ? '256px' : '0',
+        }} // 왼쪽, 오른쪽 사이드바에 따라 마진 설정
+      >
+      <FullCalendar
+        ref={calendarRef}
+        plugins={[ dayGridPlugin ]}
+        initialView="dayGridMonth"
+        locale={koLocale}
+        headerToolbar={{
+          left: 'today title prev,next',
+          center: '',
+          right: ''
+        }}
+        events={[
+          { title: 'Event 1', date: '2024-06-01' },
+          { title: 'Event 2', date: '2024-06-07' }
+        ]}
+        dayCellContent={(dayCellArg) => (
+          <span>{dayCellArg.date.getDate()}</span>  // 날짜 숫자만 표시
+        )}
+      />
       </div>
+      {/* 사이드바 컴포넌트 사용 */}
+      <RightSidebar isOpen={isSidebarOpen} content={sidebarContent} toggleSidebar={toggleSidebar}/>
 
-      {selectedDate && (
-        <ReservationDetail
-          date={selectedDate}
-          onClose={() => setSelectedDate(null)}
-        />
-      )}
-    </div>
+  </div>
   );
 };
 
