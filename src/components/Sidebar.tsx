@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { BsChevronRight } from "react-icons/bs";
 import KakaoLoginButton from "./KakaoLogin";
