@@ -6,6 +6,7 @@ export const userState = atom({
     isAuthenticated: false,
     accessToken: "",
     refreshToken: "",
-    userPK: null,
+    userPK: "",
+    email: "",
   },
 });

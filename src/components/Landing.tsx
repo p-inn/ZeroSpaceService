@@ -1,8 +1,14 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 
 const Landing = () => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push("/main/calendar");
+  };
   return (
     <>
       <div className="flex flex-col justify-center items-center py-20">
@@ -20,9 +26,12 @@ const Landing = () => {
             솔루션입니다.
           </p>
         </div>
-        <div className="btn bg-black text-white rounded-full text-xl w-48 h-20">
+        <button
+          onClick={handleClick}
+          className="btn bg-black text-white rounded-full text-xl w-48 h-20"
+        >
           시작하기
-        </div>
+        </button>
         <div className="flex m-8 justify-center align-middle">
           <div className="w-60 h-72 flex flex-col border m-4 rounded-lg shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.2)] items-center justify-center">
             <img
