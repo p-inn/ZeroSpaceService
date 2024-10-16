@@ -25,29 +25,23 @@ const RightSidebar: React.FC<SidebarProps> = ({
     >
       {/* 사이드바 아이콘 부분 */}
       <div className="flex flex-col items-center bg-white h-full w-16 border-r">
-        <Image
+        <img
           src="/assets/KakaoIcon.png"
           onClick={() => toggleSidebar("kakaoLogin")}
           className="rounded-full cursor-pointer p-2 hover:bg-gray-200"
           alt="카카오로그인 아이콘"
-          width={50}
-          height={50}
         />
-        <Image
+        <img
           src="/assets/AccessIcon.png"
           onClick={() => toggleSidebar("ourplace")}
           className="rounded-full cursor-pointer p-2 hover:bg-gray-200"
           alt="카카오로그인 아이콘"
-          width={50}
-          height={50}
         />
-        <Image
+        <img
           src="/assets/GoogleFormIcon.png"
           onClick={() => toggleSidebar("default")}
           className="rounded-full cursor-pointer p-2 hover:bg-gray-200"
           alt="카카오로그인 아이콘"
-          width={50}
-          height={50}
         />
       </div>
 
@@ -70,12 +64,10 @@ const RightSidebar: React.FC<SidebarProps> = ({
             <h2 className="text-2xl font-bold mb-6">연동 플랫폼 관리</h2>
             <div className="mb-16">
               <div className="flex mr-3 items-center gap-2 mb-4">
-                <Image
+                <img
                   src="/assets/SpaceCloud-Logo.png"
                   alt="카카오로그인 아이콘"
                   className="w-10 h-10"
-                  width={50}
-                  height={50}
                 />
                 <h3 className="text-lg font-bold items-center">
                   스페이스 클라우드
@@ -100,7 +92,7 @@ const RightSidebar: React.FC<SidebarProps> = ({
             </div>
             <div className="mb-16">
               <div className="flex mr-3 items-center gap-2 mb-4">
-                <Image
+                <img
                   src="/assets/OurPlace-Logo.png"
                   alt="카카오로그인 아이콘"
                   className="w-10 h-10"

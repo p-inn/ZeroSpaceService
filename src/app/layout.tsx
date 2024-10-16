@@ -15,7 +15,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <Header />
         <main
           className={
-            "pt-24 px-5 w-11/12 mx-auto md:px-1.5 md:min-w-[1000px] min-h-[calc(100vh-140px)]"
+            "pt-24 px-5 w-10/12 mx-auto md:px-1.5 md:min-w-[1000px] min-h-[calc(100vh-140px)]"
           }
         >
           <ClientWrapper>{children}</ClientWrapper>
