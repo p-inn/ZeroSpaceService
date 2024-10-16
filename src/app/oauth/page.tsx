@@ -24,7 +24,7 @@ export default function OAuthRedirect() {
           }
 
           // 카카오 OAuth2 인증 코드를 백엔드로 전송하여 토큰을 받음
-          const res = await defaultAxios.get(`/loginResult?code=${code}`);
+          const res = await defaultAxios.get(`/oauth?code=${code}`);
 
           // 토큰 및 사용자 정보 추출
           const authorizationHeader = res.headers["authorization"];
