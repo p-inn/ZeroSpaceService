@@ -1,12 +1,14 @@
-import MainLayout from "./main/page";
+"use client";
 
-const Home = () => {
+import React from "react";
+import Footer from "@/components/Footer";
+import Landing from "@/components/Landing";
 
+export default function MainLayout() {
   return (
     <>
-      <MainLayout />
-    </> 
-  )
-};
-
-export default Home;
+      <Landing />
+      <Footer />
+    </>
+  );
+}
