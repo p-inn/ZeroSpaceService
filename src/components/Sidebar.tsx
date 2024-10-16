@@ -30,18 +30,24 @@ const RightSidebar: React.FC<SidebarProps> = ({
           onClick={() => toggleSidebar("kakaoLogin")}
           className="rounded-full cursor-pointer p-2 hover:bg-gray-200"
           alt="카카오로그인 아이콘"
+          width={50}
+          height={50}
         />
         <Image
           src="/assets/AccessIcon.png"
           onClick={() => toggleSidebar("ourplace")}
           className="rounded-full cursor-pointer p-2 hover:bg-gray-200"
           alt="카카오로그인 아이콘"
+          width={50}
+          height={50}
         />
         <Image
           src="/assets/GoogleFormIcon.png"
           onClick={() => toggleSidebar("default")}
           className="rounded-full cursor-pointer p-2 hover:bg-gray-200"
           alt="카카오로그인 아이콘"
+          width={50}
+          height={50}
         />
       </div>
 
@@ -68,6 +74,8 @@ const RightSidebar: React.FC<SidebarProps> = ({
                   src="/assets/SpaceCloud-Logo.png"
                   alt="카카오로그인 아이콘"
                   className="w-10 h-10"
+                  width={50}
+                  height={50}
                 />
                 <h3 className="text-lg font-bold items-center">
                   스페이스 클라우드

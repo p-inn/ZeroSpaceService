@@ -26,6 +26,8 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ isOpen, toggleSidebar }) => {
           onClick={toggleSidebar}
           className="w-5 h-5 cursor-pointer mr-2 mt-2"
           alt="아이콘"
+          width={50}
+          height={50}
         />
       </div>
 

@@ -12,6 +12,8 @@ export default function Header() {
             src="/assets/ZERO SPACE.png"
             alt="제로스페이스로고"
             className="mx-4"
+            width={200}
+            height={100}
           />
           <div className="badge badge-neutral px-2 mx-3">beta</div>
           <span className="px-2 mx-3">캘린더</span>

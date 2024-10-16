@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 
 const Landing = () => {
   return (
@@ -26,7 +25,7 @@ const Landing = () => {
         </div>
         <div className="flex m-8 justify-center align-middle">
           <div className="w-60 h-72 flex flex-col border m-4 rounded-lg shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.2)] items-center justify-center">
-            <Image
+            <img
               src="/assets/SpaceCloud-Logo.png"
               alt="SpaceCloudLogo"
               className="w-24 h-24"
@@ -35,7 +34,7 @@ const Landing = () => {
             <span className="text-gray-600">연동 가능</span>
           </div>
           <div className="w-60 h-72 flex flex-col border m-4 rounded-lg shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.2)] items-center justify-center">
-            <Image
+            <img
               src="/assets/OurPlace-Logo.png"
               alt="OurPlaceLogo"
               className="w-24 h-24"
