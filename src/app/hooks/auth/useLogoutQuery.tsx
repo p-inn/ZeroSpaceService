@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import useToast from "../useToast";
 
 const fetchAPI = async () => {
-  const res = await axiosAccess.get("/logout");
+  const res = await axiosAccess.get("/logoutzero");
   return res.data;
 };
 
