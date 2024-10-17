@@ -37,10 +37,10 @@ const LoggedInView: React.FC = () => {
       <p className="text-gray-500 text-xs mb-2">
         제로베이스 통합 로그인에 사용되는 카카오 로그인 정보입니다.
       </p>
-      <div className="w-full bg-gray-300 p-2 rounded-lg">
+      <div className="w-full bg-gray-300 p-2 rounded-lg my-2">
         <span className="text-gray-700">{user.email}</span>
       </div>
-      <div className="flex gap-3 justify-center">
+      <div className="flex gap-3 justify-center mt-4">
         <button
           className="btn w-full bg-white text-gray-500 px-4 py-2 rounded-3xl hover:text-blue-500 hover:border-blue-500 hover:bg-blue-200"
           onClick={handleWithDraw}
