@@ -3,7 +3,9 @@
 import React from "react";
 import { BsChevronRight } from "react-icons/bs";
 import KakaoLoginButton from "./KakaoLogin";
-import Image from "next/image";
+import LoggedInView from "./SetSignIn";
+import { useRecoilValue } from "recoil";
+import { userState } from "@/recoil/atoms";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -16,6 +18,7 @@ const RightSidebar: React.FC<SidebarProps> = ({
   content,
   toggleSidebar,
 }) => {
+  const user = useRecoilValue(userState);
   return (
     <div
       className={`fixed top-0 right-0 h-full bg-white shadow-lg z-40 transition-transform duration-300 transform ${
@@ -51,11 +54,7 @@ const RightSidebar: React.FC<SidebarProps> = ({
         {content === "kakaoLogin" && (
           <div>
             <h2 className="text-2xl font-bold mb-6">계정 관리</h2>
-            <KakaoLoginButton />
-            <span className="text-gray-500 text-sm">
-              회원가입 시 제로스페이스의 이용약관 / 개인정보처리 방침에 동의하게
-              됩니다.
-            </span>
+            {user.isAuthenticated ? <LoggedInView /> : <KakaoLoginButton />}
           </div>
         )}
 
