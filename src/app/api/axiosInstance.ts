@@ -38,7 +38,7 @@ export const axiosRequest = axios.create({
 axiosAccess.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem("Access-Token");
-    if (accessToken) {
+    if (accessToken && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
     return config;
