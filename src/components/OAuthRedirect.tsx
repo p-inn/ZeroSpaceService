@@ -18,7 +18,7 @@ export function OAuthRedirect() {
     try {
       const res = await defaultAxios.post("/loginResult", { userId });
       const authorizationHeader = res.headers["authorization"];
-      const accessToken = authorizationHeader;
+      const accessToken = authorizationHeader?.replace("Bearer ", "") || "";
 
       // 로컬 스토리지에 토큰 및 사용자 정보 저장
       localStorage.setItem("Access-Token", accessToken);
