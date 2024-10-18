@@ -84,19 +84,19 @@ const RightSidebar: React.FC<SidebarProps> = ({
       {/* 사이드바 아이콘 부분 */}
       <div className="flex flex-col items-center bg-white h-full w-16 border-r">
         <img
-          src="/assets/KakaoIcon.png"
+          src="/assets/LoginIcon.png"
           onClick={() => toggleSidebar("kakaoLogin")}
           className="rounded-full cursor-pointer p-2 hover:bg-gray-200"
           alt="카카오로그인 아이콘"
         />
         <img
-          src="/assets/AccessIcon.png"
+          src="/assets/LinkageIcon.png"
           onClick={() => toggleSidebar("hourplace")}
           className="rounded-full cursor-pointer p-2 hover:bg-gray-200"
           alt="연동 플랫폼 관리 아이콘"
         />
         <img
-          src="/assets/GoogleFormIcon.png"
+          src="/assets/SurveyIcon.png"
           onClick={() => toggleSidebar("default")}
           className="rounded-full cursor-pointer p-2 hover:bg-gray-200"
           alt="설문조사 아이콘"
@@ -144,10 +144,11 @@ const RightSidebar: React.FC<SidebarProps> = ({
               setSuccess={setOurPlaceSuccess}
             />
             <button
-              className="btn bg-black absolute bottom-16 text-white font-bold"
+              className="btn bg-black absolute bottom-32 text-white font-bold rounded-3xl"
               onClick={handleSyncUpdate}
+              style={{ width: "72%" }}
             >
-              ⚒️연동 업데이트⚒️
+              ⚒️ 연동 업데이트 ⚒️
             </button>
           </div>
         )}
@@ -155,7 +156,9 @@ const RightSidebar: React.FC<SidebarProps> = ({
         {content === "default" && (
           <div>
             <h2 className="text-2xl font-bold mb-6">설문 조사</h2>
-            <a className="link">https://forms.gle/CZCF6ob5E5Dk6iAk8</a>
+            <a className="link" href="https://forms.gle/CZCF6ob5E5Dk6iAk8">
+              설문조사 링크
+            </a>
           </div>
         )}
       </div>
