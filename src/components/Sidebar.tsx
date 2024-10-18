@@ -22,7 +22,7 @@ const RightSidebar: React.FC<SidebarProps> = ({
 }) => {
   const user = useRecoilValue(userState);
 
-  const { fetchMonthlyDataMutation } = useGetDataQuery();
+  const { fetchMonthlyDataMutation, isInitialDataLoading } = useGetDataQuery();
 
   // 연동 업데이트 버튼 클릭 시, 데이터 GET & POST 요청 실행
   const handleSyncUpdate = () => {
@@ -145,6 +145,7 @@ const RightSidebar: React.FC<SidebarProps> = ({
             />
             <button
               className="btn bg-black absolute bottom-32 text-white font-bold rounded-3xl"
+              disabled={isInitialDataLoading}
               onClick={handleSyncUpdate}
               style={{ width: "72%" }}
             >

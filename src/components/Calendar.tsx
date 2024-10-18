@@ -72,12 +72,12 @@ const Calendar = () => {
             const locationColor = getLocationColor(event.location);
             const platformLogo = PLATFORM_LOGOS[event.platform] || "";
 
-            // 시작 시간, 끝나는 시간에서 'T' 제거
-            const startTime = event.startTime.replace("T", " ");
-            const endTime = event.endTime.replace("T", " ");
+            // 시작 시간, 끝나는 시간을 `T` 제거하고 형식에 맞게 변환
+            const startTime = new Date(event.startTime).toLocaleString();
+            const endTime = new Date(event.endTime).toLocaleString();
 
             return {
-              title: event.location,
+              title: event.location, // 로케이션만 표시
               start: startTime,
               end: endTime,
               backgroundColor: locationColor,
@@ -127,11 +127,11 @@ const Calendar = () => {
               const locationColor = getLocationColor(event.location);
               const platformLogo = PLATFORM_LOGOS[event.platform] || "";
 
-              const startTime = event.startTime.replace("T", " ");
-              const endTime = event.endTime.replace("T", " ");
+              const startTime = new Date(event.startTime).toLocaleString();
+              const endTime = new Date(event.endTime).toLocaleString();
 
               return {
-                title: event.location,
+                title: event.location, // 로케이션 이름만 표시
                 start: startTime,
                 end: endTime,
                 backgroundColor: locationColor,
@@ -176,14 +176,6 @@ const Calendar = () => {
           events={events}
           eventContent={(eventInfo) => (
             <div className="flex items-center justify-start h-full px-2">
-              {/* 플랫폼 로고 */}
-              {eventInfo.event.extendedProps.platformLogo && (
-                <img
-                  src={eventInfo.event.extendedProps.platformLogo}
-                  alt={eventInfo.event.extendedProps.platform}
-                  className="w-3 h-3 mr-2"
-                />
-              )}
               {/* 로케이션 이름 */}
               <span>{eventInfo.event.title}</span>
             </div>
@@ -218,7 +210,7 @@ const Calendar = () => {
       {selectedEvent && selectedEvent.reservationNumber && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           {/* 모달 박스 */}
-          <div className="bg-white rounded-lg shadow-xl p-6">
+          <div className="bg-white rounded-lg shadow-xl">
             <ReservationCard
               reservationNumber={selectedEvent.reservationNumber}
               platform={selectedEvent.platform}
