@@ -155,7 +155,7 @@ const RightSidebar: React.FC<SidebarProps> = ({
         {content === "default" && (
           <div>
             <h2 className="text-2xl font-bold mb-6">설문 조사</h2>
-            <a className="link">설문조사 링크</a>
+            <a className="link">https://forms.gle/CZCF6ob5E5Dk6iAk8</a>
           </div>
         )}
       </div>
