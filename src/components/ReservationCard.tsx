@@ -1,26 +1,28 @@
 import React from "react";
 
 interface ReservationCardProps {
-  reservationNumber: string;
-  platform: string;
-  reserver: string;
+  startTime: string;
+  endTime: string;
   price: string;
+  location: string;
+  platform: string;
+  process: string;
+  customer: string;
+  reservationNumber: string;
   link: string;
-  date: string;
-  duration: string;
-  title: string;
   onClose: () => void;
 }
 
 const ReservationCard: React.FC<ReservationCardProps> = ({
-  reservationNumber,
-  platform,
-  reserver,
+  startTime,
+  endTime,
   price,
+  location,
+  platform,
+  process,
+  customer,
+  reservationNumber,
   link,
-  date,
-  duration,
-  title,
   onClose, // 닫기 핸들러
 }) => {
   return (
@@ -34,16 +36,16 @@ const ReservationCard: React.FC<ReservationCardProps> = ({
       </button>
 
       {/* 예약 확정 */}
-      <div className="badge badge-primary mb-4">예약확정</div>
+      <div className="badge bg-blue-200 text-blue-500 mb-4">{process}</div>
 
       {/* 타이틀 */}
       <h2 className="mt-2 text-xl font-bold text-gray-900 leading-snug">
-        {title}
+        {location}
       </h2>
 
       {/* 날짜 및 시간 */}
       <p className="text-gray-600 mt-2">
-        {date}, <span className="text-blue-500 underline">{duration}</span>
+        {startTime}, <span className="text-blue-500 underline">{endTime}</span>
       </p>
 
       {/* 예약 정보 */}
@@ -60,7 +62,7 @@ const ReservationCard: React.FC<ReservationCardProps> = ({
 
         <div className="flex justify-between items-center">
           <span className="font-semibold text-gray-700">예약자</span>
-          <span className="text-gray-900">{reserver}</span>
+          <span className="text-gray-900">{customer}</span>
         </div>
 
         <div className="flex justify-between items-center">
