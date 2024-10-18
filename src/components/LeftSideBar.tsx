@@ -55,7 +55,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
             aspectRatio={1}
             events={events}
             dayCellContent={(dayCellArg) => (
-              <span>{dayCellArg.date.getDate()}</span> // 날짜 숫자만 표시
+              <span>{dayCellArg.date.getDate()}</span>
             )}
             eventContent={(eventInfo) => (
               <div
