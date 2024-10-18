@@ -184,12 +184,9 @@ const Calendar = () => {
             // 이벤트 스타일링
             const backgroundColor = info.event.backgroundColor;
             const textColor = info.event.textColor;
-            const platformLogo = info.event.extendedProps.platformLogo;
-        
             // 배경색 및 글자색 설정
             info.el.style.backgroundColor = backgroundColor;
             info.el.style.color = textColor;
-        
             // 하루짜리 이벤트도 스타일 적용
             if (info.event.allDay) {
               info.el.style.backgroundColor = backgroundColor;
@@ -211,12 +208,12 @@ const Calendar = () => {
       />
 
       {selectedEvent && selectedEvent.reservationNumber && (
-      <div className="fixed inset-0 flex items-center justify-center z-50">
-       {/* 모달 배경 */}
-      <div className="fixed inset-0 bg-black opacity-0" />
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          {/* 모달 배경 */}
+          <div className="fixed inset-0 bg-black opacity-0" />
 
-       {/* 모달 박스 */}
-      <div className="bg-white rounded-lg shadow-xl p-6 transition-transform transform scale-95">
+          {/* 모달 박스 */}
+          <div className="bg-white rounded-lg shadow-xl p-6 transition-transform transform scale-95">
             <ReservationCard
               reservationNumber={selectedEvent.reservationNumber}
               platform={selectedEvent.platform}
