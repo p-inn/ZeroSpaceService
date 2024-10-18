@@ -6,5 +6,9 @@ export const userState = atom({
     isAuthenticated: false,
     accessToken: "",
     email: "",
+    hourplaceEmail: "",
+    hourplacePassword: "",
+    spacecloudEmail: "",
+    spacecloudPassword: "",
   },
 });

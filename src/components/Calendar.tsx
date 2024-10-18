@@ -6,8 +6,11 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import koLocale from "@fullcalendar/core/locales/ko";
 import RightSidebar from "./Sidebar";
 import LeftSidebar from "./LeftSideBar";
+import useGetDataQuery from "@/app/hooks/account/useGetDataQuery";
 
 const Calendar = () => {
+  const { fetchMonthlyDataMutation, isInitialDataSuccess } = useGetDataQuery();
+  const [events, setEvents] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const [sidebarContent, setSidebarContent] = useState("default");
@@ -31,6 +34,41 @@ const Calendar = () => {
       }, 300); // 애니메이션과 함께 업데이트
     }
   }, [isSidebarOpen, isLeftSidebarOpen]); // 사이드바 상태가 변경될 때마다 호출
+
+  // FullCalendar에서 월이 변경될 때 실행되는 함수
+  const handleDatesSet = (info: any) => {
+    const year = info.start.getFullYear();
+    const month = info.start.getMonth() + 1;
+
+    // 월별 데이터 POST 요청
+    fetchMonthlyDataMutation.mutate(
+      { year, month },
+      {
+        onSuccess: (data) => {
+          setEvents(data); // 가져온 데이터를 FullCalendar에 반영
+        },
+      },
+    );
+  };
+
+  // 초기 데이터 GET 성공 시, 현재 월의 데이터 가져오기
+  useEffect(() => {
+    if (isInitialDataSuccess) {
+      const currentDate = new Date();
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth() + 1;
+
+      // 현재 월 POST 요청
+      fetchMonthlyDataMutation.mutate(
+        { year, month },
+        {
+          onSuccess: (data) => {
+            setEvents(data); // 가져온 데이터를 FullCalendar에 반영
+          },
+        },
+      );
+    }
+  }, [isInitialDataSuccess]);
 
   return (
     <div className="flex h-screen w-full">
@@ -57,10 +95,8 @@ const Calendar = () => {
             center: "",
             right: "",
           }}
-          events={[
-            { title: "Event 1", date: "2024-06-01" },
-            { title: "Event 2", date: "2024-06-07" },
-          ]}
+          events={events}
+          datesSet={handleDatesSet}
           dayCellContent={(dayCellArg) => (
             <span>{dayCellArg.date.getDate()}</span> // 날짜 숫자만 표시
           )}

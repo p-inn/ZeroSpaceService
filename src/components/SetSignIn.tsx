@@ -18,6 +18,10 @@ const LoggedInView: React.FC = () => {
       isAuthenticated: false,
       accessToken: "",
       email: "",
+      hourplaceEmail: "",
+      hourplacePassword: "",
+      spacecloudEmail: "",
+      spacecloudPassword: "",
     });
   };
 
@@ -28,6 +32,10 @@ const LoggedInView: React.FC = () => {
       isAuthenticated: false,
       accessToken: "",
       email: "",
+      hourplaceEmail: "",
+      hourplacePassword: "",
+      spacecloudEmail: "",
+      spacecloudPassword: "",
     });
   };
 
@@ -42,13 +50,13 @@ const LoggedInView: React.FC = () => {
       </div>
       <div className="flex gap-3 justify-center mt-4">
         <button
-          className="btn w-full bg-white text-gray-500 px-4 py-2 rounded-3xl hover:text-blue-500 hover:border-blue-500 hover:bg-blue-200"
+          className="btn bg-white text-gray-500 px-4 py-2 rounded-3xl hover:text-blue-500 hover:border-blue-500 hover:bg-blue-200"
           onClick={handleWithDraw}
         >
           회원탈퇴
         </button>
         <button
-          className="btn w-full bg-white text-gray-500 px-4 py-2 rounded-3xl hover:text-blue-500 hover:border-blue-500 hover:bg-blue-200"
+          className="btn bg-white text-gray-500 px-4 py-2 rounded-3xl hover:text-blue-500 hover:border-blue-500 hover:bg-blue-200"
           onClick={handleLogout}
         >
           로그아웃

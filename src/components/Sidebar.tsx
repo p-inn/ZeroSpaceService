@@ -6,7 +6,8 @@ import LoggedInView from "./SetSignIn";
 import { useRecoilValue } from "recoil";
 import { userState } from "@/recoil/atoms";
 import usePostAccountQuery from "@/app/hooks/account/usePostAccountQuery";
-import AccountSaveForm from "./AccountSaveForm"; // 분리된 컴포넌트
+import AccountSaveForm from "./AccountSaveForm";
+import useGetDataQuery from "@/app/hooks/account/useGetDataQuery";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -20,6 +21,25 @@ const RightSidebar: React.FC<SidebarProps> = ({
   toggleSidebar,
 }) => {
   const user = useRecoilValue(userState);
+
+  const { fetchMonthlyDataMutation } = useGetDataQuery();
+
+  // 연동 업데이트 버튼 클릭 시, 데이터 GET & POST 요청 실행
+  const handleSyncUpdate = () => {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1;
+
+    // 월별 데이터 POST 요청
+    fetchMonthlyDataMutation.mutate(
+      { year, month },
+      {
+        onSuccess: (data) => {
+          console.log("연동 업데이트 완료: ", data);
+        },
+      },
+    );
+  };
 
   // 스페이스 클라우드 계정 상태
   const [spaceCloudEmail, setSpaceCloudEmail] = useState("");
@@ -47,7 +67,7 @@ const RightSidebar: React.FC<SidebarProps> = ({
       onSuccess: () => {
         if (platform === "spacecloud") {
           setSpaceCloudSuccess(true);
-        } else if (platform === "ourplace") {
+        } else if (platform === "hourplace") {
           setOurPlaceSuccess(true);
         }
       },
@@ -71,7 +91,7 @@ const RightSidebar: React.FC<SidebarProps> = ({
         />
         <img
           src="/assets/AccessIcon.png"
-          onClick={() => toggleSidebar("ourplace")}
+          onClick={() => toggleSidebar("hourplace")}
           className="rounded-full cursor-pointer p-2 hover:bg-gray-200"
           alt="연동 플랫폼 관리 아이콘"
         />
@@ -92,7 +112,7 @@ const RightSidebar: React.FC<SidebarProps> = ({
           </div>
         )}
 
-        {content === "ourplace" && (
+        {content === "hourplace" && (
           <div>
             <h2 className="text-2xl font-bold mb-6">연동 플랫폼 관리</h2>
 
@@ -115,7 +135,7 @@ const RightSidebar: React.FC<SidebarProps> = ({
               platform="아워플레이스"
               platformLogo="/assets/OurPlace-Logo.png"
               onSave={(email, password) =>
-                handleSaveAccount("ourplace", email, password)
+                handleSaveAccount("hourplace", email, password)
               }
               isPending={isPending}
               success={ourPlaceSuccess}
@@ -123,6 +143,12 @@ const RightSidebar: React.FC<SidebarProps> = ({
               setEmail={setOurPlaceEmail}
               setSuccess={setOurPlaceSuccess}
             />
+            <button
+              className="btn bg-black absolute bottom-16 text-white font-bold"
+              onClick={handleSyncUpdate}
+            >
+              ⚒️연동 업데이트⚒️
+            </button>
           </div>
         )}
 
