@@ -10,6 +10,7 @@ interface ReservationCardProps {
   customer: string;
   reservationNumber: string;
   link: string;
+  locationColor: string;
   onClose: () => void;
 }
 
@@ -23,10 +24,14 @@ const ReservationCard: React.FC<ReservationCardProps> = ({
   customer,
   reservationNumber,
   link,
+  locationColor,
   onClose, // 닫기 핸들러
 }) => {
   return (
-    <div className="max-w-md p-6 bg-white rounded-lg shadow-xl relative border-t-4 border-purple-500">
+    <div
+      className="max-w-md p-6 bg-white rounded-lg shadow-xl relative"
+      style={{ borderTopColor: locationColor, borderTopWidth: "4px" }}
+    >
       {/* 닫기 버튼 */}
       <button
         className="btn btn-sm btn-circle absolute top-4 right-4 text-gray-500 hover:text-gray-700"

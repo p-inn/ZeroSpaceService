@@ -26,8 +26,8 @@ const COLORS = [
 
 // 플랫폼별 로고
 const PLATFORM_LOGOS: Record<string, string> = {
-  hourplace: "/assets/OurPlace-logo.png",
-  spacecloud: "/assets/SpaceCloud-logo.png",
+  hourplace: "/assets/OurPlace-Logo.png",
+  spacecloud: "/assets/SpaceCloud-Logo.png",
 };
 
 const Calendar = () => {
@@ -180,6 +180,19 @@ const Calendar = () => {
               <span>{eventInfo.event.title}</span>
             </div>
           )}
+          eventDidMount={(info) => {
+            // 이벤트 스타일링
+            const backgroundColor = info.event.backgroundColor;
+            const textColor = info.event.textColor;
+            // 배경색 및 글자색 설정
+            info.el.style.backgroundColor = backgroundColor;
+            info.el.style.color = textColor;
+            // 하루짜리 이벤트도 스타일 적용
+            if (info.event.allDay) {
+              info.el.style.backgroundColor = backgroundColor;
+              info.el.style.color = textColor;
+            }
+          }}
           eventClick={handleEventClick}
           datesSet={handleDatesSet}
           dayCellContent={(dayCellArg) => (
@@ -195,8 +208,12 @@ const Calendar = () => {
       />
 
       {selectedEvent && selectedEvent.reservationNumber && (
-        <div className="modal modal-open">
-          <div className="modal-box relative">
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          {/* 모달 배경 */}
+          <div className="fixed inset-0 bg-black opacity-0" />
+
+          {/* 모달 박스 */}
+          <div className="bg-white rounded-lg shadow-xl p-6 transition-transform transform scale-95">
             <ReservationCard
               reservationNumber={selectedEvent.reservationNumber}
               platform={selectedEvent.platform}
@@ -208,6 +225,7 @@ const Calendar = () => {
               location={selectedEvent.location}
               process={selectedEvent.process}
               onClose={handleCloseModal}
+              locationColor={getLocationColor(selectedEvent.location)}
             />
           </div>
         </div>
