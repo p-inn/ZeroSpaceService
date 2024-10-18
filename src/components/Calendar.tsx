@@ -72,10 +72,14 @@ const Calendar = () => {
             const locationColor = getLocationColor(event.location);
             const platformLogo = PLATFORM_LOGOS[event.platform] || "";
 
+            // 시작 시간, 끝나는 시간에서 'T' 제거
+            const startTime = event.startTime.replace("T", " ");
+            const endTime = event.endTime.replace("T", " ");
+
             return {
-              title: event.customer,
-              start: event.startTime,
-              end: event.endTime,
+              title: event.location,
+              start: startTime,
+              end: endTime,
               backgroundColor: locationColor,
               textColor: "#ffffff", // 글씨를 흰색으로 설정
               extendedProps: { ...event },
@@ -123,12 +127,15 @@ const Calendar = () => {
               const locationColor = getLocationColor(event.location);
               const platformLogo = PLATFORM_LOGOS[event.platform] || "";
 
+              const startTime = event.startTime.replace("T", " ");
+              const endTime = event.endTime.replace("T", " ");
+
               return {
-                title: event.customer,
-                start: event.startTime,
-                end: event.endTime,
+                title: event.location,
+                start: startTime,
+                end: endTime,
                 backgroundColor: locationColor,
-                textColor: "#ffffff", // 글씨를 흰색으로 설정
+                textColor: "#ffffff",
                 extendedProps: { ...event },
                 platformLogo,
               };
@@ -145,6 +152,7 @@ const Calendar = () => {
       <LeftSidebar
         isOpen={isLeftSidebarOpen}
         toggleSidebar={toggleLeftSidebar}
+        events={events}
       />
       <div
         className={`transition-all duration-300 ${
@@ -167,16 +175,16 @@ const Calendar = () => {
           }}
           events={events}
           eventContent={(eventInfo) => (
-            <div className="flex items-center justify-center h-full">
+            <div className="flex items-center justify-start h-full px-2">
               {/* 플랫폼 로고 */}
               {eventInfo.event.extendedProps.platformLogo && (
                 <img
                   src={eventInfo.event.extendedProps.platformLogo}
                   alt={eventInfo.event.extendedProps.platform}
-                  className="w-5 h-5 mr-2"
+                  className="w-3 h-3 mr-2"
                 />
               )}
-              {/* 고객명 */}
+              {/* 로케이션 이름 */}
               <span>{eventInfo.event.title}</span>
             </div>
           )}
@@ -187,7 +195,7 @@ const Calendar = () => {
             // 배경색 및 글자색 설정
             info.el.style.backgroundColor = backgroundColor;
             info.el.style.color = textColor;
-            // 하루짜리 이벤트도 스타일 적용
+            info.el.style.padding = "5px";
             if (info.event.allDay) {
               info.el.style.backgroundColor = backgroundColor;
               info.el.style.color = textColor;
@@ -209,11 +217,8 @@ const Calendar = () => {
 
       {selectedEvent && selectedEvent.reservationNumber && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
-          {/* 모달 배경 */}
-          <div className="fixed inset-0 bg-black opacity-0" />
-
           {/* 모달 박스 */}
-          <div className="bg-white rounded-lg shadow-xl p-6 transition-transform transform scale-95">
+          <div className="bg-white rounded-lg shadow-xl p-6">
             <ReservationCard
               reservationNumber={selectedEvent.reservationNumber}
               platform={selectedEvent.platform}
