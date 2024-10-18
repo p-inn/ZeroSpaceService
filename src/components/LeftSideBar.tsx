@@ -9,9 +9,14 @@ import Image from "next/image";
 interface LeftSidebarProps {
   isOpen: boolean;
   toggleSidebar: () => void;
+  events: any[];
 }
 
-const LeftSidebar: React.FC<LeftSidebarProps> = ({ isOpen, toggleSidebar }) => {
+const LeftSidebar: React.FC<LeftSidebarProps> = ({
+  isOpen,
+  toggleSidebar,
+  events,
+}) => {
   return (
     <div
       className={`fixed top-0 left-0 h-full bg-white shadow-lg z-40 transition-transform duration-300 transform ${
@@ -45,15 +50,20 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ isOpen, toggleSidebar }) => {
               center: "",
               right: "",
             }}
-            height={450} // 달력의 높이를 고정
-            contentHeight={100} // 내용 영역의 높이 설정
-            aspectRatio={1} // 넓이와 높이 비율 설정
-            events={[
-              { title: "Event 1", date: "2024-06-01" },
-              { title: "Event 2", date: "2024-06-07" },
-            ]}
+            height={450}
+            contentHeight={100}
+            aspectRatio={1}
+            events={events}
             dayCellContent={(dayCellArg) => (
               <span>{dayCellArg.date.getDate()}</span> // 날짜 숫자만 표시
+            )}
+            eventContent={(eventInfo) => (
+              <div
+                className="h-full w-full"
+                style={{
+                  backgroundColor: eventInfo.event.backgroundColor,
+                }}
+              />
             )}
             viewClassNames="calendar-small-style"
           />
