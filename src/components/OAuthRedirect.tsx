@@ -15,46 +15,46 @@ export function OAuthRedirect() {
   const userId = searchParams.get("userId");
   const { toastSuccess } = useToast();
   const { fetchMonthlyDataMutation } = useGetDataQuery();
-
-  const getUserInfo = async () => {
-    try {
-      const res = await defaultAxios.post("/loginResult", { userId });
-      const authorizationHeader = res.headers["authorization"];
-      const accessToken = authorizationHeader?.replace("Bearer ", "") || "";
-
-      // 로컬 스토리지에 토큰 및 사용자 정보 저장
-      localStorage.setItem("Access-Token", accessToken);
-      localStorage.setItem("email", String(res.data.email));
-
-      // Recoil 상태 업데이트
-      setUserState({
-        isAuthenticated: true,
-        accessToken,
-        email: res.data.email,
-        spacecloudEmail: res.data.spacecloudEmail,
-        spacecloudPassword: res.data.spacecloudPassword,
-        hourplaceEmail: res.data.hourplaceEmail,
-        hourplacePassword: res.data.hourplacePassword,
-      });
-
-      // 현재 날짜 기준으로 연도와 월 계산
-      const currentDate = new Date();
-      const year = currentDate.getFullYear(); // 현재 연도
-      const month = currentDate.getMonth() + 1; // 현재 월 (0부터 시작하므로 +1)
-
-      // 월별 데이터를 가져오는 POST 요청
-      fetchMonthlyDataMutation.mutate({ year, month });
-
-      // 요청이 성공했을 때만 /main으로 이동
-      router.push("/main/calendar");
-      toastSuccess("로그인에 성공하였습니다!");
-    } catch (error) {
-      console.error("Login failed:", error);
-      // 실패 시 추가 처리 로직 작성 가능
-      // 예를 들어, 에러 페이지로 이동하거나 알림을 표시할 수 있습니다.
-    }
-  };
   useEffect(() => {
+    const getUserInfo = async () => {
+      try {
+        const res = await defaultAxios.post("/loginResult", { userId });
+        const authorizationHeader = res.headers["authorization"];
+        const accessToken = authorizationHeader?.replace("Bearer ", "") || "";
+
+        // 로컬 스토리지에 토큰 및 사용자 정보 저장
+        localStorage.setItem("Access-Token", accessToken);
+        localStorage.setItem("email", String(res.data.email));
+
+        // Recoil 상태 업데이트
+        setUserState({
+          isAuthenticated: true,
+          accessToken,
+          email: res.data.email,
+          spacecloudEmail: res.data.spacecloudEmail,
+          spacecloudPassword: res.data.spacecloudPassword,
+          hourplaceEmail: res.data.hourplaceEmail,
+          hourplacePassword: res.data.hourplacePassword,
+        });
+
+        // 현재 날짜 기준으로 연도와 월 계산
+        const currentDate = new Date();
+        const year = currentDate.getFullYear(); // 현재 연도
+        const month = currentDate.getMonth() + 1; // 현재 월 (0부터 시작하므로 +1)
+
+        // 월별 데이터를 가져오는 POST 요청
+        fetchMonthlyDataMutation.mutate({ year, month });
+
+        // 요청이 성공했을 때만 /main으로 이동
+        router.push("/main/calendar");
+        toastSuccess("로그인에 성공하였습니다!");
+      } catch (error) {
+        console.error("Login failed:", error);
+        // 실패 시 추가 처리 로직 작성 가능
+        // 예를 들어, 에러 페이지로 이동하거나 알림을 표시할 수 있습니다.
+      }
+    };
+
     getUserInfo();
   }, []);
 

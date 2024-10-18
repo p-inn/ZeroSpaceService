@@ -7,6 +7,28 @@ import koLocale from "@fullcalendar/core/locales/ko";
 import RightSidebar from "./Sidebar";
 import LeftSidebar from "./LeftSideBar";
 import useGetDataQuery from "@/app/hooks/account/useGetDataQuery";
+import ReservationCard from "./ReservationCard";
+
+// 색상 배열
+const COLORS = [
+  "#FF0707",
+  "#157938",
+  "#00CF03",
+  "#00E1FF",
+  "#006FFF",
+  "#BB00FF",
+  "F8D701",
+  "FF8107",
+  "FF9CCC",
+  "E0B5FF",
+  "FFC756",
+];
+
+// 플랫폼별 로고
+const PLATFORM_LOGOS: Record<string, string> = {
+  hourplace: "/assets/OurPlace-logo.png",
+  spacecloud: "/assets/SpaceCloud-logo.png",
+};
 
 const Calendar = () => {
   const { fetchMonthlyDataMutation, isInitialDataSuccess } = useGetDataQuery();
@@ -14,56 +36,104 @@ const Calendar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const [sidebarContent, setSidebarContent] = useState("default");
-  const calendarRef = useRef<FullCalendar | null>(null); // FullCalendar 참조용
+  const [selectedEvent, setSelectedEvent] = useState<any>(null);
+  const [locationColors, setLocationColors] = useState<Record<string, string>>(
+    {},
+  );
+  const calendarRef = useRef<FullCalendar | null>(null);
 
   const toggleSidebar = (content: string) => {
     setIsSidebarOpen(!isSidebarOpen);
     setSidebarContent(content);
   };
-  // 왼쪽 사이드바 토글
+
   const toggleLeftSidebar = () => {
     setIsLeftSidebarOpen(!isLeftSidebarOpen);
   };
 
-  // 사이드바가 열리거나 닫힐 때 FullCalendar 크기 업데이트
   useEffect(() => {
     if (calendarRef.current) {
       const calendarApi = calendarRef.current.getApi();
       setTimeout(() => {
-        calendarApi.updateSize(); // 사이드바 열리고 닫힌 후 크기 업데이트
-      }, 300); // 애니메이션과 함께 업데이트
+        calendarApi.updateSize();
+      }, 300);
     }
-  }, [isSidebarOpen, isLeftSidebarOpen]); // 사이드바 상태가 변경될 때마다 호출
+  }, [isSidebarOpen, isLeftSidebarOpen]);
 
-  // FullCalendar에서 월이 변경될 때 실행되는 함수
   const handleDatesSet = (info: any) => {
     const year = info.start.getFullYear();
     const month = info.start.getMonth() + 1;
 
-    // 월별 데이터 POST 요청
     fetchMonthlyDataMutation.mutate(
       { year, month },
       {
         onSuccess: (data) => {
-          setEvents(data); // 가져온 데이터를 FullCalendar에 반영
+          const updatedEvents = data.contents.map((event: any) => {
+            const locationColor = getLocationColor(event.location);
+            const platformLogo = PLATFORM_LOGOS[event.platform] || "";
+
+            return {
+              title: event.customer,
+              start: event.startTime,
+              end: event.endTime,
+              backgroundColor: locationColor,
+              textColor: "#ffffff", // 글씨를 흰색으로 설정
+              extendedProps: { ...event },
+              platformLogo,
+            };
+          });
+          setEvents(updatedEvents);
         },
       },
     );
   };
 
-  // 초기 데이터 GET 성공 시, 현재 월의 데이터 가져오기
+  // 각 location에 대해 색상을 할당
+  const getLocationColor = (location: string) => {
+    if (!locationColors[location]) {
+      const randomColor =
+        COLORS[Object.keys(locationColors).length % COLORS.length];
+      setLocationColors((prevColors) => ({
+        ...prevColors,
+        [location]: randomColor,
+      }));
+    }
+    return locationColors[location];
+  };
+
+  const handleEventClick = (clickInfo: any) => {
+    setSelectedEvent(clickInfo.event.extendedProps);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedEvent(null);
+  };
+
   useEffect(() => {
     if (isInitialDataSuccess) {
       const currentDate = new Date();
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth() + 1;
 
-      // 현재 월 POST 요청
       fetchMonthlyDataMutation.mutate(
         { year, month },
         {
           onSuccess: (data) => {
-            setEvents(data); // 가져온 데이터를 FullCalendar에 반영
+            const updatedEvents = data.contents.map((event: any) => {
+              const locationColor = getLocationColor(event.location);
+              const platformLogo = PLATFORM_LOGOS[event.platform] || "";
+
+              return {
+                title: event.customer,
+                start: event.startTime,
+                end: event.endTime,
+                backgroundColor: locationColor,
+                textColor: "#ffffff", // 글씨를 흰색으로 설정
+                extendedProps: { ...event },
+                platformLogo,
+              };
+            });
+            setEvents(updatedEvents);
           },
         },
       );
@@ -83,7 +153,7 @@ const Calendar = () => {
         style={{
           marginLeft: isLeftSidebarOpen ? "256px" : "0",
           marginRight: isSidebarOpen ? "256px" : "0",
-        }} // 왼쪽, 오른쪽 사이드바에 따라 마진 설정
+        }}
       >
         <FullCalendar
           ref={calendarRef}
@@ -96,18 +166,52 @@ const Calendar = () => {
             right: "",
           }}
           events={events}
+          eventContent={(eventInfo) => (
+            <div className="flex items-center justify-center h-full">
+              {/* 플랫폼 로고 */}
+              {eventInfo.event.extendedProps.platformLogo && (
+                <img
+                  src={eventInfo.event.extendedProps.platformLogo}
+                  alt={eventInfo.event.extendedProps.platform}
+                  className="w-5 h-5 mr-2"
+                />
+              )}
+              {/* 고객명 */}
+              <span>{eventInfo.event.title}</span>
+            </div>
+          )}
+          eventClick={handleEventClick}
           datesSet={handleDatesSet}
           dayCellContent={(dayCellArg) => (
-            <span>{dayCellArg.date.getDate()}</span> // 날짜 숫자만 표시
+            <span>{dayCellArg.date.getDate()}</span>
           )}
         />
       </div>
-      {/* 사이드바 컴포넌트 사용 */}
+
       <RightSidebar
         isOpen={isSidebarOpen}
         content={sidebarContent}
         toggleSidebar={toggleSidebar}
       />
+
+      {selectedEvent && selectedEvent.reservationNumber && (
+        <div className="modal modal-open">
+          <div className="modal-box relative">
+            <ReservationCard
+              reservationNumber={selectedEvent.reservationNumber}
+              platform={selectedEvent.platform}
+              customer={selectedEvent.customer}
+              price={selectedEvent.price}
+              link={selectedEvent.link}
+              startTime={selectedEvent.startTime}
+              endTime={selectedEvent.endTime}
+              location={selectedEvent.location}
+              process={selectedEvent.process}
+              onClose={handleCloseModal}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
