@@ -22,46 +22,44 @@ const RightSidebar: React.FC<SidebarProps> = ({
 }) => {
   const user = useRecoilValue(userState);
 
-  const { fetchMonthlyDataMutation, isInitialDataLoading } = useGetDataQuery();
+  const { refetchInitialData, fetchMonthlyDataMutation, isInitialDataLoading } = useGetDataQuery();
   const [isSyncing, setIsSyncing] = useState(false); // 연동 업데이트 중인지 상태 관리
 
   // 연동 업데이트 버튼 클릭 시, 데이터 GET & POST 요청 실행
   const handleSyncUpdate = () => {
-    if (isSyncing) return; // 이미 연동 업데이트 중이라면 더 이상 요청하지 않음
+  if (isSyncing) return; // 이미 연동 업데이트 중이라면 더 이상 요청하지 않음
 
-    setIsSyncing(true); // 연동 시작
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth() + 1;
+  setIsSyncing(true); // 연동 시작
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth() + 1;
 
-    // 월별 데이터 GET 요청 성공 시 POST 요청 실행
-    fetchMonthlyDataMutation.mutate(
-      { year, month },
-      {
-        onSuccess: (data) => {
-          console.log("초기 데이터 가져오기 완료: ", data);
-          // POST 요청을 다시 실행 (현재 연도와 월을 사용)
-          fetchMonthlyDataMutation.mutate(
-            { year, month },
-            {
-              onSuccess: (postData) => {
-                console.log("연동 업데이트 완료: ", postData);
-              },
-              onError: (error) => {
-                console.error("연동 업데이트 실패: ", error);
-              },
-              onSettled: () => {
-                setIsSyncing(false); // 연동 완료 후 상태 초기화
-              },
-            },
-          );
-        },
-        onError: (error) => {
-          console.error("초기 데이터 가져오기 실패: ", error);
-        },
-      },
-    );
-  };
+  // 먼저 GET 요청 실행
+  refetchInitialData()
+    .then((initialData) => {
+      console.log("초기 데이터 가져오기 성공: ", initialData);
+
+      // GET 요청 성공 시 POST 요청 실행
+      fetchMonthlyDataMutation.mutate(
+        { year, month },
+        {
+          onSuccess: (postData) => {
+            console.log("월별 데이터 업데이트 완료: ", postData);
+          },
+          onError: (error) => {
+            console.error("월별 데이터 업데이트 실패: ", error);
+          },
+          onSettled: () => {
+            setIsSyncing(false); // 연동 완료 후 상태 초기화
+          },
+        }
+      );
+    })
+    .catch((error) => {
+      console.error("초기 데이터 가져오기 실패: ", error);
+      setIsSyncing(false); // 실패 시 상태 초기화
+    });
+};
 
   // 스페이스 클라우드 계정 상태
   const [spaceCloudEmail, setSpaceCloudEmail] = useState("");
