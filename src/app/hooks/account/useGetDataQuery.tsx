@@ -43,9 +43,11 @@ const useGetDataQuery = () => {
     data: initialData,
     isLoading: isInitialDataLoading,
     isSuccess: isInitialDataSuccess,
+    refetch: refetchInitialData,
   } = useQuery({
     queryKey: ["initialData"],
     queryFn: fetchInitialAPI,
+    enabled: false,
   });
 
   return {
@@ -53,6 +55,7 @@ const useGetDataQuery = () => {
     isInitialDataLoading,
     fetchMonthlyDataMutation,
     isInitialDataSuccess,
+    refetchInitialData,
   };
 };
 
