@@ -58,7 +58,6 @@ const RightSidebar: React.FC<SidebarProps> = ({
         },
         onError: (error) => {
           console.error("초기 데이터 가져오기 실패: ", error);
-          setIsSyncing(false); // 요청 실패 시도 다시 버튼을 활성화
         },
       },
     );
