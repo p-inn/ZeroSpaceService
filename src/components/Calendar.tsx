@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import koLocale from "@fullcalendar/core/locales/ko";
-import { useRecoilValue } from "recoil";
 import RightSidebar from "./Sidebar";
 import LeftSidebar from "./LeftSideBar";
 import useGetDataQuery from "@/app/hooks/account/useGetDataQuery";
 import ReservationCard from "./ReservationCard";
+import { useRecoilValue } from "recoil";
 import { userState } from "@/recoil/atoms";
 
 // 색상 배열
@@ -44,6 +44,10 @@ const Calendar = () => {
   const [locationColors, setLocationColors] = useState<Record<string, string>>(
     {},
   );
+  const [currentDateRange, setCurrentDateRange] = useState<{
+    year: number;
+    month: number;
+  } | null>(null); // 현재 달력의 날짜 범위 상태
   const calendarRef = useRef<FullCalendar | null>(null);
 
   const toggleSidebar = (content: string) => {
@@ -68,57 +72,63 @@ const Calendar = () => {
     const year = info.start.getFullYear();
     const month = info.start.getMonth() + 1;
 
-    // 로그인 상태 체크 후, 중복 요청 방지
-    if (user.isAuthenticated && !isFetching) {
-      setIsFetching(true); // 요청 시작 시 fetching 상태 true
+    // prev/next 버튼으로 날짜 범위가 변경될 때만 데이터 요청
+    if (
+      !currentDateRange ||
+      currentDateRange.year !== year ||
+      currentDateRange.month !== month
+    ) {
+      setCurrentDateRange({ year, month });
 
-      fetchMonthlyDataMutation.mutate(
-        { year, month },
-        {
-          onSuccess: (data) => {
-            const updatedEvents = data.contents.map((event: any) => {
-              const locationColor = getLocationColor(event.location);
-              const platformLogo = PLATFORM_LOGOS[event.platform] || "";
+      // 로그인 상태 체크 후, 중복 요청 방지
+      if (user.isAuthenticated && !isFetching) {
+        setIsFetching(true); // 요청 시작 시 fetching 상태 true
 
-              // 시작 시간, 끝나는 시간을 `T` 제거하고 형식에 맞게 변환
-              const startTime = new Date(event.startTime).toLocaleString();
-              const endTime = new Date(event.endTime).toLocaleString();
+        fetchMonthlyDataMutation.mutate(
+          { year, month },
+          {
+            onSuccess: (data) => {
+              const updatedEvents = data.contents.map((event: any) => {
+                const locationColor = getLocationColor(event.location);
+                const platformLogo = PLATFORM_LOGOS[event.platform] || "";
 
-              return {
-                title: event.location, // 로케이션만 표시
-                start: startTime,
-                end: endTime,
-                backgroundColor: locationColor,
-                textColor: "#ffffff", // 글씨를 흰색으로 설정
-                extendedProps: { ...event },
-                platformLogo,
-              };
-            });
-            setEvents(updatedEvents);
+                // 시작 시간, 끝나는 시간을 `T` 제거하고 형식에 맞게 변환
+                const startTime = new Date(event.startTime).toLocaleString();
+                const endTime = new Date(event.endTime).toLocaleString();
+
+                return {
+                  title: event.location, // 로케이션만 표시
+                  start: startTime,
+                  end: endTime,
+                  backgroundColor: locationColor,
+                  textColor: "#ffffff", // 글씨를 흰색으로 설정
+                  extendedProps: { ...event },
+                  platformLogo,
+                };
+              });
+              setEvents(updatedEvents);
+            },
+            onSettled: () => {
+              setIsFetching(false); // 요청 완료 시 fetching 상태 false
+            },
           },
-          onSettled: () => {
-            setIsFetching(false); // 요청 완료 시 fetching 상태 false
-          },
-        },
-      );
+        );
+      }
     }
   };
 
   // 각 location에 대해 색상을 할당
-  const getLocationColor = useMemo(
-    () => (location: string) => {
-      if (!locationColors[location]) {
-        const randomColor =
-          COLORS[Object.keys(locationColors).length % COLORS.length];
-        setLocationColors((prevColors) => ({
-          ...prevColors,
-          [location]: randomColor,
-        }));
-      }
-      return locationColors[location];
-    },
-    [locationColors],
-  );
+  const getLocationColor = (location: string) => {
+    if (!locationColors[location]) {
+      const randomColor =
+        COLORS[Object.keys(locationColors).length % COLORS.length];
+      setLocationColors((prevColors) => ({
+        ...prevColors,
+        [location]: randomColor,
+      }));
+    }
+    return locationColors[location];
+  };
 
   const handleEventClick = (clickInfo: any) => {
     setSelectedEvent(clickInfo.event.extendedProps);
