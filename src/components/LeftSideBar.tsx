@@ -1,7 +1,7 @@
 "use client";
 
 import FullCalendar from "@fullcalendar/react";
-import React from "react";
+import React, { useMemo } from "react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import koLocale from "@fullcalendar/core/locales/ko";
 import Image from "next/image";
@@ -17,6 +17,19 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
   toggleSidebar,
   events,
 }) => {
+  const locationList = useMemo(() => {
+    const locationsWithColors = events.map((event) => ({
+      name: event.title, // 로케이션 이름
+      color: event.backgroundColor, // 로케이션 컬러
+    }));
+
+    // 중복된 로케이션 제거
+    const uniqueLocations = Array.from(
+      new Map(locationsWithColors.map((item) => [item.name, item])).values(),
+    );
+
+    return uniqueLocations;
+  }, [events]);
   return (
     <div
       className={`fixed top-0 left-0 h-full bg-white shadow-lg z-40 transition-transform duration-300 transform ${
@@ -71,12 +84,26 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
         {/* 예약 리스트 부분 */}
         <div className="flex-grow">
           <h3 className="text-md font-bold mb-4 text-gray-500">
-            나의 플레이스 리스트🌲
+            📕 나의 플레이스 리스트 📕
           </h3>
           <ul className="space-y-2 m-2">
-            <li className="p-1">나의 플레이스</li>
-            <li className="p-1">나의 플레이스</li>
-            <li className="p-1">나의 플레이스</li>
+            {locationList.length > 0 ? (
+              locationList.map((location, index) => (
+                <li key={index} className="p-1 flex items-center">
+                  {/* 로케이션 컬러 표시 (동그라미) */}
+                  <span
+                    className="w-4 h-4 rounded-full mr-2"
+                    style={{
+                      backgroundColor: location.color,
+                    }}
+                  />
+                  {/* 로케이션 이름 */}
+                  {location.name}
+                </li>
+              ))
+            ) : (
+              <li className="p-1">등록된 플레이스가 없습니다.</li>
+            )}
           </ul>
         </div>
       </div>
