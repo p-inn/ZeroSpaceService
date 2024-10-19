@@ -77,9 +77,8 @@ const Calendar = () => {
             const locationColor = getLocationColor(event.location);
             const platformLogo = PLATFORM_LOGOS[event.platform] || "";
 
-            // 시작 시간, 끝나는 시간을 `T` 제거하고 형식에 맞게 변환
-            const startTime = new Date(event.startTime).toLocaleString();
-            const endTime = new Date(event.endTime).toLocaleString();
+            const startTime = new Date(event.startTime);
+            const endTime = new Date(event.endTime);
 
             return {
               title: event.location, // 로케이션만 표시
@@ -133,8 +132,8 @@ const Calendar = () => {
                 const locationColor = getLocationColor(event.location);
                 const platformLogo = PLATFORM_LOGOS[event.platform] || "";
 
-                const startTime = new Date(event.startTime).toLocaleString();
-                const endTime = new Date(event.endTime).toLocaleString();
+                const startTime = new Date(event.startTime);
+                const endTime = new Date(event.endTime);
 
                 return {
                   title: event.location, // 로케이션 이름만 표시
@@ -180,7 +179,7 @@ const Calendar = () => {
             center: "",
             right: "",
           }}
-          events={events}
+          events={events} // FullCalendar에 이벤트 전달
           eventContent={(eventInfo) => (
             <div className="flex items-center justify-start h-full px-2">
               {/* 로케이션 이름 */}
