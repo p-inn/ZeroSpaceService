@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import KakaoLoginButton from "./KakaoLogin";
 import LoggedInView from "./SetSignIn";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { userState } from "@/recoil/atoms";
 import usePostAccountQuery from "@/app/hooks/account/usePostAccountQuery";
 import AccountSaveForm from "./AccountSaveForm";
@@ -25,6 +25,7 @@ const RightSidebar: React.FC<SidebarProps> = ({
   isSyncing,
   toggleSidebarContent,
 }) => {
+  const setUserState = useSetRecoilState(userState);
   const user = useRecoilValue(userState);
   const sidebarRef = useRef(null);
 
@@ -38,6 +39,28 @@ const RightSidebar: React.FC<SidebarProps> = ({
 
   // usePostAccountQuery 훅 사용
   const { postAccountMutate, isPending } = usePostAccountQuery();
+
+  useEffect(() => {
+    const storedAccessToken = localStorage.getItem("Access-Token");
+    const storedEmail = localStorage.getItem("email");
+    const storedSpacecloudEmail = localStorage.getItem("spacecloudEmail");
+    const storedSpacecloudPassword = localStorage.getItem("spacecloudPassword");
+    const storedHourplaceEmail = localStorage.getItem("hourplaceEmail");
+    const storedHourplacePassword = localStorage.getItem("hourplacePassword");
+
+    if (storedAccessToken && storedEmail) {
+      // 로컬 스토리지에서 가져온 정보를 Recoil 상태에 저장
+      setUserState({
+        isAuthenticated: true,
+        accessToken: storedAccessToken,
+        email: storedEmail,
+        spacecloudEmail: storedSpacecloudEmail || "",
+        spacecloudPassword: storedSpacecloudPassword || "",
+        hourplaceEmail: storedHourplaceEmail || "",
+        hourplacePassword: storedHourplacePassword || "",
+      });
+    }
+  }, [setUserState]);
 
   useEffect(() => {
     const storedSpaceCloudEmail = localStorage.getItem("spacecloudEmail");
