@@ -57,8 +57,7 @@ const ReservationCard: React.FC<ReservationCardProps> = ({
 
       {/* 날짜 및 시간 */}
       <p className="text-gray-600 mt-2">
-        {formatDate(startTime)}
-        <span className="text-blue-500 underline">{formatDate(endTime)}</span>
+        {formatDate(startTime)} ~ <span>{formatDate(endTime)}</span>
       </p>
 
       {/* 예약 정보 */}
