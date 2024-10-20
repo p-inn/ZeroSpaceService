@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import KakaoLoginButton from "./KakaoLogin";
 import LoggedInView from "./SetSignIn";
 import { useRecoilValue } from "recoil";
@@ -8,6 +8,7 @@ import { userState } from "@/recoil/atoms";
 import usePostAccountQuery from "@/app/hooks/account/usePostAccountQuery";
 import AccountSaveForm from "./AccountSaveForm";
 import useGetDataQuery from "@/app/hooks/account/useGetDataQuery";
+import Spinner from "./Spinner";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -73,6 +74,21 @@ const RightSidebar: React.FC<SidebarProps> = ({
   // usePostAccountQuery 훅 사용
   const { postAccountMutate, isPending } = usePostAccountQuery();
 
+  useEffect(() => {
+    const storedSpaceCloudEmail = localStorage.getItem("spacecloudEmail");
+    const storedHourPlaceEmail = localStorage.getItem("hourplaceEmail");
+
+    if (storedSpaceCloudEmail) {
+      setSpaceCloudEmail(storedSpaceCloudEmail);
+      setSpaceCloudSuccess(true); // 연동된 상태로 설정
+    }
+
+    if (storedHourPlaceEmail) {
+      setOurPlaceEmail(storedHourPlaceEmail);
+      setOurPlaceSuccess(true); // 연동된 상태로 설정
+    }
+  }, []);
+
   // 계정 저장 핸들러
   const handleSaveAccount = (
     platform: string,
@@ -88,13 +104,14 @@ const RightSidebar: React.FC<SidebarProps> = ({
       onSuccess: () => {
         if (platform === "spacecloud") {
           setSpaceCloudSuccess(true);
+          localStorage.setItem("spacecloudEmail", email); // 저장 시 로컬 스토리지에 저장
         } else if (platform === "hourplace") {
           setOurPlaceSuccess(true);
+          localStorage.setItem("hourplaceEmail", email); // 저장 시 로컬 스토리지에 저장
         }
       },
     });
   };
-
   return (
     <div
       className={`fixed top-0 right-0 h-full bg-white shadow-lg z-40 transition-transform duration-300 transform ${
@@ -102,6 +119,8 @@ const RightSidebar: React.FC<SidebarProps> = ({
       } w-96 flex`}
       style={{ top: "5rem" }} // 사이드바와 아이콘을 함께 움직이도록 설정 (사이드바 너비 조정: 80px)
     >
+      {/* 연동 업데이트 중일 때 화면에 Spinner 표시 */}
+      {isSyncing && <Spinner />}
       {/* 사이드바 아이콘 부분 */}
       <div className="flex flex-col items-center bg-white h-full w-16 border-r">
         <img

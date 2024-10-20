@@ -25,6 +25,19 @@ export function OAuthRedirect() {
         // 로컬 스토리지에 토큰 및 사용자 정보 저장
         localStorage.setItem("Access-Token", accessToken);
         localStorage.setItem("email", String(res.data.email));
+        localStorage.setItem(
+          "spacecloudEmail",
+          String(res.data.spacecloudEmail),
+        );
+        localStorage.setItem(
+          "spacecloudPassword",
+          String(res.data.spacecloudPassword),
+        );
+        localStorage.setItem("hourplaceEmail", String(res.data.hourplaceEmail));
+        localStorage.setItem(
+          "hourplacePassword",
+          String(res.data.hourplacePassword),
+        );
 
         // Recoil 상태 업데이트
         setUserState({
