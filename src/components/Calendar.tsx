@@ -260,7 +260,7 @@ const Calendar = () => {
           eventClick={handleEventClick}
           datesSet={handleDatesSet}
           dayCellContent={(dayCellArg) => (
-            <span>{dayCellArg.date.toLocaleDateString()}</span>
+            <span>{dayCellArg.date.getDate()}</span>
           )}
         />
       </div>
