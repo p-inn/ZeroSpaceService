@@ -41,6 +41,7 @@ body {
   margin: 0;
   line-height: inherit;
   height: 100vh;
+  background-color: white !important;
 }
 hr {
   height: 0;
@@ -233,6 +234,7 @@ select:-webkit-autofill:focus {
 /* Calendar CSS */
 .fc {
   border: none !important;
+  background-color: white !important;
 }
 .fc-day-sun a {
   /* 일요일 컬러 */
