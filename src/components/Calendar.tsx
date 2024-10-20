@@ -10,6 +10,7 @@ import useGetDataQuery from "@/app/hooks/account/useGetDataQuery";
 import ReservationCard from "./ReservationCard";
 import { useRecoilValue } from "recoil";
 import { userState } from "@/recoil/atoms";
+import Spinner from "./Spinner";
 
 // 색상 배열
 const COLORS = [
@@ -33,7 +34,8 @@ const PLATFORM_LOGOS: Record<string, string> = {
 };
 
 const Calendar = () => {
-  const { fetchMonthlyDataMutation, isInitialDataSuccess } = useGetDataQuery();
+  const { fetchMonthlyDataMutation, isInitialDataSuccess, refetchInitialData } =
+    useGetDataQuery();
   const [events, setEvents] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
@@ -44,6 +46,7 @@ const Calendar = () => {
   );
   const calendarRef = useRef<FullCalendar | null>(null);
   const user = useRecoilValue(userState);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   const toggleSidebar = (content: string) => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -62,6 +65,38 @@ const Calendar = () => {
       }, 300);
     }
   }, [isSidebarOpen, isLeftSidebarOpen]);
+
+  const handleSyncUpdate = () => {
+    if (isSyncing) return; // 이미 연동 업데이트 중이면 실행하지 않음
+
+    setIsSyncing(true); // 연동 시작
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1;
+
+    refetchInitialData()
+      .then((initialData) => {
+        console.log("초기 데이터 가져오기 성공: ", initialData);
+
+        fetchMonthlyDataMutation.mutate(
+          { year, month },
+          {
+            onSuccess: (postData) => {
+              console.log("월별 데이터 업데이트 완료: ", postData);
+              setIsSyncing(false); // 연동 완료 후 상태 초기화
+            },
+            onError: (error) => {
+              console.error("월별 데이터 업데이트 실패: ", error);
+              setIsSyncing(false); // 실패 시 상태 초기화
+            },
+          },
+        );
+      })
+      .catch((error) => {
+        console.error("초기 데이터 가져오기 실패: ", error);
+        setIsSyncing(false); // 실패 시 상태 초기화
+      });
+  };
 
   const handleDatesSet = (info: any) => {
     if (!user.isAuthenticated) return;
@@ -155,6 +190,11 @@ const Calendar = () => {
 
   return (
     <div className="flex h-screen w-full">
+      {isSyncing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 bg-gray-700">
+          <Spinner /> {/* 연동 진행 중일 때 Spinner 표시 */}
+        </div>
+      )}
       <LeftSidebar
         isOpen={isLeftSidebarOpen}
         toggleSidebar={toggleLeftSidebar}
@@ -209,8 +249,10 @@ const Calendar = () => {
 
       <RightSidebar
         isOpen={isSidebarOpen}
+        isSyncing={isSyncing}
         content={sidebarContent}
         toggleSidebar={toggleSidebar}
+        onSyncUpdate={handleSyncUpdate}
       />
 
       {selectedEvent && selectedEvent.reservationNumber && (
