@@ -15,7 +15,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en">
       <head>
         {/* 파비콘 추가 */}
-        <link rel="icon" href="/assets/zerospace-Logo.png" />
+        <link rel="icon" href="/favicon.ico" />
       </head>
       <body>
         <Header />

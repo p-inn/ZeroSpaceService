@@ -11,7 +11,6 @@ import ReservationCard from "./ReservationCard";
 import { useRecoilValue } from "recoil";
 import { userState } from "@/recoil/atoms";
 import Spinner from "./Spinner";
-import { format } from "date-fns";
 
 // 색상 배열
 const COLORS = [
@@ -21,11 +20,11 @@ const COLORS = [
   "#00E1FF",
   "#006FFF",
   "#BB00FF",
-  "#F8D701",
-  "#FF8107",
-  "#FF9CCC",
-  "#E0B5FF",
-  "#FFC756",
+  "F8D701",
+  "FF8107",
+  "FF9CCC",
+  "E0B5FF",
+  "FFC756",
 ];
 
 // 플랫폼별 로고
@@ -104,7 +103,6 @@ const Calendar = () => {
         setIsSyncing(false); // 실패 시 상태 초기화
       });
   };
-
   // 확인용 디버깅 코드 추가
   useEffect(() => {
     console.log("isSyncing 상태:", isSyncing);
@@ -124,12 +122,8 @@ const Calendar = () => {
             const locationColor = getLocationColor(event.location);
             const platformLogo = PLATFORM_LOGOS[event.platform] || "";
 
-            // startTime 및 endTime을 date-fns를 사용하여 포맷팅
-            const startTime = format(
-              new Date(event.startTime),
-              "yyyy-MM-dd HH:mm",
-            );
-            const endTime = format(new Date(event.endTime), "yyyy-MM-dd HH:mm");
+            const startTime = new Date(event.startTime);
+            const endTime = new Date(event.endTime);
 
             return {
               title: event.location, // 로케이션만 표시
@@ -183,15 +177,8 @@ const Calendar = () => {
                 const locationColor = getLocationColor(event.location);
                 const platformLogo = PLATFORM_LOGOS[event.platform] || "";
 
-                // startTime 및 endTime을 date-fns를 사용하여 포맷팅
-                const startTime = format(
-                  new Date(event.startTime),
-                  "yyyy-MM-dd HH:mm",
-                );
-                const endTime = format(
-                  new Date(event.endTime),
-                  "yyyy-MM-dd HH:mm",
-                );
+                const startTime = new Date(event.startTime);
+                const endTime = new Date(event.endTime);
 
                 return {
                   title: event.location, // 로케이션 이름만 표시
@@ -245,15 +232,16 @@ const Calendar = () => {
           events={events} // FullCalendar에 이벤트 전달
           eventContent={(eventInfo) => (
             <div className="flex items-center justify-start h-full px-2">
-              {/* 로케이션 이름 */}
-              <span>{eventInfo.event.title}</span>
+              {/* 플랫폼 로고 */}
               {eventInfo.event.extendedProps.platformLogo && (
                 <img
                   src={eventInfo.event.extendedProps.platformLogo}
-                  alt="platform logo"
-                  style={{ width: "16px", marginLeft: "5px" }}
+                  alt="Platform Logo"
+                  className="w-4 h-4 mr-2"
                 />
               )}
+              {/* 로케이션 이름 */}
+              <span>{eventInfo.event.title}</span>
             </div>
           )}
           eventDidMount={(info) => {
@@ -272,7 +260,7 @@ const Calendar = () => {
           eventClick={handleEventClick}
           datesSet={handleDatesSet}
           dayCellContent={(dayCellArg) => (
-            <span>{dayCellArg.date.getDate()}</span>
+            <span>{dayCellArg.date.toLocaleDateString()}</span>
           )}
         />
       </div>
