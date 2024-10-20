@@ -74,33 +74,66 @@ const Calendar = () => {
 
   const handleSyncUpdate = () => {
     if (isSyncing) return; // 이미 연동 업데이트 중이면 실행하지 않음
-
-    setIsSyncing(true); // 연동 시작
+    setIsSyncing(true); // 스피너 시작
     const currentDate = new Date();
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth() + 1;
-
+    // GET 요청: 초기 데이터 가져오기
     refetchInitialData()
       .then((initialData) => {
         console.log("초기 데이터 가져오기 성공: ", initialData);
 
-        fetchMonthlyDataMutation.mutate(
-          { year, month },
-          {
-            onSuccess: (postData) => {
-              console.log("월별 데이터 업데이트 완료: ", postData);
-              setIsSyncing(false); // 연동 완료 후 상태 초기화
-            },
-            onError: (error) => {
-              console.error("월별 데이터 업데이트 실패: ", error);
-              setIsSyncing(false); // 실패 시 상태 초기화
-            },
-          },
-        );
+        // GET 요청 성공 후, POST 요청과 스피너 멈추기를 동시에 실행
+        Promise.all([
+          new Promise((resolve, reject) => {
+            fetchMonthlyDataMutation.mutate(
+              { year, month },
+              {
+                onSuccess: (postData) => {
+                  console.log("월별 데이터 업데이트 완료: ", postData);
+                  const updatedEvents = postData.contents.map((event: any) => {
+                    const locationColor = getLocationColor(event.location);
+                    const platformLogo = PLATFORM_LOGOS[event.platform] || "";
+                    const startTime = new Date(event.startTime);
+                    const endTime = new Date(event.endTime);
+                    return {
+                      title: event.location, // 로케이션만 표시
+                      start: startTime,
+                      end: endTime,
+                      backgroundColor: locationColor,
+                      textColor: "#ffffff", // 글씨를 흰색으로 설정
+                      extendedProps: { ...event },
+                      platformLogo,
+                    };
+                  });
+                  setEvents(updatedEvents);
+                  resolve(postData); // 성공 시 프로미스 해결
+                },
+                onError: (error) => {
+                  console.error("월별 데이터 업데이트 실패: ", error);
+                  reject(error); // 실패 시 프로미스 거부
+                },
+              },
+            );
+          }),
+          new Promise((resolve) => {
+            setIsSyncing(false); // 스피너 멈추기
+            resolve(true);
+          }),
+        ])
+          .then(() => {
+            console.log("POST 요청 및 스피너 멈추기 완료");
+          })
+          .catch((error) => {
+            console.error(
+              "POST 요청 중 오류 발생 또는 스피너 멈추기 실패:",
+              error,
+            );
+          });
       })
       .catch((error) => {
         console.error("초기 데이터 가져오기 실패: ", error);
-        setIsSyncing(false); // 실패 시 상태 초기화
+        setIsSyncing(false); // GET 요청 실패 시 스피너 종료
       });
   };
   // 확인용 디버깅 코드 추가

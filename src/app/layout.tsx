@@ -15,7 +15,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en">
       <head>
         {/* 파비콘 추가 */}
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/assets/favicon.ico" />
       </head>
       <body>
         <Header />
@@ -27,7 +27,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <ClientWrapper>{children}</ClientWrapper>
           <ToastContainer
             position="top-right"
-            autoClose={3000}
+            autoClose={1500}
             hideProgressBar={false}
           />
         </main>

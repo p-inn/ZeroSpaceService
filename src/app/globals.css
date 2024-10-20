@@ -230,6 +230,9 @@ select:-webkit-autofill:focus {
   -webkit-text-fill-color: #fff;
 }
 :root {
+  color-scheme: light; /* 브라우저에게 라이트 모드 스타일을 강제 */
+  --text-color: #213547;
+  --background-color: #ffffff;
   --fc-border-color: white;
 }
 /* Calendar CSS */

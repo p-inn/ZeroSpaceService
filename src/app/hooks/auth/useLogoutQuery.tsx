@@ -22,6 +22,10 @@ const useSignOutQuery = () => {
     onSuccess: () => {
       localStorage.removeItem("Access-Token");
       localStorage.removeItem("email");
+      localStorage.removeItem("spacecloudEmail");
+      localStorage.removeItem("spacecloudPassword");
+      localStorage.removeItem("hourplaceEmail");
+      localStorage.removeItem("hourplacePassword");
       queryClient.removeQueries({
         queryKey: ["email"],
         exact: true,
