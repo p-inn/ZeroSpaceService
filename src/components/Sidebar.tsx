@@ -12,6 +12,7 @@ interface SidebarProps {
   isOpen: boolean;
   content: string;
   toggleSidebar: (content: string) => void;
+  toggleSidebarContent: (content: string) => void;
   onSyncUpdate: () => void;
   isSyncing: boolean;
 }
@@ -22,6 +23,7 @@ const RightSidebar: React.FC<SidebarProps> = ({
   toggleSidebar,
   onSyncUpdate,
   isSyncing,
+  toggleSidebarContent,
 }) => {
   const user = useRecoilValue(userState);
   const sidebarRef = useRef(null);
@@ -109,19 +111,19 @@ const RightSidebar: React.FC<SidebarProps> = ({
       <div className="flex flex-col items-center bg-white h-full w-16 border-r">
         <img
           src="/assets/LoginIcon.png"
-          onClick={() => toggleSidebar("kakaoLogin")}
+          onClick={() => toggleSidebarContent("kakaoLogin")}
           className="rounded-full cursor-pointer p-2 hover:bg-gray-200"
           alt="카카오로그인 아이콘"
         />
         <img
           src="/assets/LinkageIcon.png"
-          onClick={() => toggleSidebar("hourplace")}
+          onClick={() => toggleSidebarContent("hourplace")}
           className="rounded-full cursor-pointer p-2 hover:bg-gray-200"
           alt="연동 플랫폼 관리 아이콘"
         />
         <img
           src="/assets/SurveyIcon.png"
-          onClick={() => toggleSidebar("default")}
+          onClick={() => toggleSidebarContent("default")}
           className="rounded-full cursor-pointer p-2 hover:bg-gray-200"
           alt="설문조사 아이콘"
         />
