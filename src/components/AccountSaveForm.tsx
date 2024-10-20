@@ -12,6 +12,7 @@ interface AccountSaveFormProps {
   email: string;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
   setSuccess: React.Dispatch<React.SetStateAction<boolean>>;
+  platformLink: string;
 }
 
 const AccountSaveForm: React.FC<AccountSaveFormProps> = ({
@@ -23,6 +24,7 @@ const AccountSaveForm: React.FC<AccountSaveFormProps> = ({
   email,
   setEmail,
   setSuccess,
+  platformLink,
 }) => {
   const [password, setPassword] = useState("");
 
@@ -74,9 +76,14 @@ const AccountSaveForm: React.FC<AccountSaveFormProps> = ({
           >
             {isPending ? "저장 중..." : "계정 저장"}
           </button>
-          <span className="flex gap-2 text-gray-500 text-xs mt-4">
+          <a
+            href={platformLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex gap-2 text-gray-500 text-xs mt-4"
+          >
             플랫폼 방문하여 아이디/비밀번호 찾기 <BsChevronRight />
-          </span>
+          </a>
         </>
       )}
     </div>

@@ -1,67 +1,30 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import KakaoLoginButton from "./KakaoLogin";
 import LoggedInView from "./SetSignIn";
 import { useRecoilValue } from "recoil";
 import { userState } from "@/recoil/atoms";
 import usePostAccountQuery from "@/app/hooks/account/usePostAccountQuery";
 import AccountSaveForm from "./AccountSaveForm";
-import useGetDataQuery from "@/app/hooks/account/useGetDataQuery";
-import Spinner from "./Spinner";
 
 interface SidebarProps {
   isOpen: boolean;
   content: string;
   toggleSidebar: (content: string) => void;
+  onSyncUpdate: () => void;
+  isSyncing: boolean;
 }
 
 const RightSidebar: React.FC<SidebarProps> = ({
   isOpen,
   content,
   toggleSidebar,
+  onSyncUpdate,
+  isSyncing,
 }) => {
   const user = useRecoilValue(userState);
-
-  const { refetchInitialData, fetchMonthlyDataMutation, isInitialDataLoading } =
-    useGetDataQuery();
-  const [isSyncing, setIsSyncing] = useState(false); // 연동 업데이트 중인지 상태 관리
-
-  // 연동 업데이트 버튼 클릭 시, 데이터 GET & POST 요청 실행
-  const handleSyncUpdate = () => {
-    if (isSyncing) return; // 이미 연동 업데이트 중이라면 더 이상 요청하지 않음
-
-    setIsSyncing(true); // 연동 시작
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth() + 1;
-
-    // 먼저 GET 요청 실행
-    refetchInitialData()
-      .then((initialData) => {
-        console.log("초기 데이터 가져오기 성공: ", initialData);
-
-        // GET 요청 성공 시 POST 요청 실행
-        fetchMonthlyDataMutation.mutate(
-          { year, month },
-          {
-            onSuccess: (postData) => {
-              console.log("월별 데이터 업데이트 완료: ", postData);
-            },
-            onError: (error) => {
-              console.error("월별 데이터 업데이트 실패: ", error);
-            },
-            onSettled: () => {
-              setIsSyncing(false); // 연동 완료 후 상태 초기화
-            },
-          },
-        );
-      })
-      .catch((error) => {
-        console.error("초기 데이터 가져오기 실패: ", error);
-        setIsSyncing(false); // 실패 시 상태 초기화
-      });
-  };
+  const sidebarRef = useRef(null);
 
   // 스페이스 클라우드 계정 상태
   const [spaceCloudEmail, setSpaceCloudEmail] = useState("");
@@ -112,15 +75,36 @@ const RightSidebar: React.FC<SidebarProps> = ({
       },
     });
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        sidebarRef.current &&
+        !(sidebarRef.current as HTMLElement).contains(event.target as Node)
+      ) {
+        toggleSidebar("");
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, toggleSidebar]);
+
   return (
     <div
+      ref={sidebarRef}
       className={`fixed top-0 right-0 h-full bg-white shadow-lg z-40 transition-transform duration-300 transform ${
         isOpen ? "translate-x-0" : "translate-x-[calc(100%-4rem)]"
       } w-96 flex`}
       style={{ top: "5rem" }} // 사이드바와 아이콘을 함께 움직이도록 설정 (사이드바 너비 조정: 80px)
     >
-      {/* 연동 업데이트 중일 때 화면에 Spinner 표시 */}
-      {isSyncing && <Spinner />}
       {/* 사이드바 아이콘 부분 */}
       <div className="flex flex-col items-center bg-white h-full w-16 border-r">
         <img
@@ -168,6 +152,7 @@ const RightSidebar: React.FC<SidebarProps> = ({
               email={spaceCloudEmail}
               setEmail={setSpaceCloudEmail}
               setSuccess={setSpaceCloudSuccess}
+              platformLink="https://partner.spacecloud.kr/auth/login"
             />
 
             {/* 아워플레이스 계정 관리 */}
@@ -182,14 +167,15 @@ const RightSidebar: React.FC<SidebarProps> = ({
               email={ourPlaceEmail}
               setEmail={setOurPlaceEmail}
               setSuccess={setOurPlaceSuccess}
+              platformLink="https://hourplace.co.kr/email/find"
             />
             <button
               className="btn bg-black absolute bottom-32 text-white font-bold rounded-3xl"
-              disabled={isInitialDataLoading || isSyncing} // 요청 중일 때 버튼 비활성화
-              onClick={handleSyncUpdate}
+              disabled={isSyncing} // 요청 중일 때 버튼 비활성화
+              onClick={onSyncUpdate}
               style={{ width: "72%" }}
             >
-              ⚒️ 연동 업데이트 ⚒️
+              {isSyncing ? "업데이트 중..." : "⚒️ 연동 업데이트 ⚒️"}
             </button>
           </div>
         )}
