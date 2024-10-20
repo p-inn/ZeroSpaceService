@@ -48,9 +48,15 @@ const Calendar = () => {
   const user = useRecoilValue(userState);
   const [isSyncing, setIsSyncing] = useState(false);
 
-  const toggleSidebar = (content: string) => {
-    setIsSidebarOpen(!isSidebarOpen);
-    setSidebarContent(content);
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen); // 열려있으면 닫고, 닫혀있으면 열기
+  };
+
+  const toggleSidebarContent = (content: string) => {
+    if (!isSidebarOpen) {
+      setIsSidebarOpen(true); // 사이드바가 닫혀있다면 열기
+    }
+    setSidebarContent(content); // 항상 콘텐츠는 업데이트
   };
 
   const toggleLeftSidebar = () => {
@@ -97,6 +103,10 @@ const Calendar = () => {
         setIsSyncing(false); // 실패 시 상태 초기화
       });
   };
+  // 확인용 디버깅 코드 추가
+  useEffect(() => {
+    console.log("isSyncing 상태:", isSyncing);
+  }, [isSyncing]);
 
   const handleDatesSet = (info: any) => {
     if (!user.isAuthenticated) return;
@@ -253,6 +263,7 @@ const Calendar = () => {
         content={sidebarContent}
         toggleSidebar={toggleSidebar}
         onSyncUpdate={handleSyncUpdate}
+        toggleSidebarContent={toggleSidebarContent}
       />
 
       {selectedEvent && selectedEvent.reservationNumber && (

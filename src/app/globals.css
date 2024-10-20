@@ -42,6 +42,7 @@ body {
   line-height: inherit;
   height: 100vh;
   background-color: white !important;
+  color: black;
 }
 hr {
   height: 0;
@@ -342,4 +343,11 @@ select:-webkit-autofill:focus {
 
 .calendar-small-style .fc-toolbar-title {
   color: #0000ff;
+}
+/* 다크 모드 설정을 무시 */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: white; /* 다크 모드에서도 흰색 유지 */
+    color: black; /* 다크 모드에서도 검은 텍스트 유지 */
+  }
 }
