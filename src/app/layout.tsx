@@ -13,6 +13,10 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
+      <head>
+        {/* 파비콘 추가 */}
+        <link rel="icon" href="/assets/zerospace-Logo.png" />
+      </head>
       <body>
         <Header />
         <main
