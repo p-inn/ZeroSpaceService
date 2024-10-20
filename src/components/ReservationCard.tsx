@@ -1,4 +1,6 @@
 import React from "react";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
 
 interface ReservationCardProps {
   startTime: string;
@@ -13,6 +15,11 @@ interface ReservationCardProps {
   locationColor: string;
   onClose: () => void;
 }
+
+const formatDate = (datetime: string) => {
+  // date-fns를 이용해 ISO 날짜를 원하는 형식으로 변환
+  return format(new Date(datetime), "yyyy-MM-dd HH:mm", { locale: ko });
+};
 
 const ReservationCard: React.FC<ReservationCardProps> = ({
   startTime,
@@ -50,7 +57,8 @@ const ReservationCard: React.FC<ReservationCardProps> = ({
 
       {/* 날짜 및 시간 */}
       <p className="text-gray-600 mt-2">
-        {startTime}, <span className="text-blue-500 underline">{endTime}</span>
+        {formatDate(startTime)}
+        <span className="text-blue-500 underline">{formatDate(endTime)}</span>
       </p>
 
       {/* 예약 정보 */}
