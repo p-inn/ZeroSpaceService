@@ -145,7 +145,7 @@ const Calendar = () => {
     if (!user.isAuthenticated) return;
 
     const year = info.start.getFullYear();
-    const month = info.start.getMonth() + 1;
+    const month = info.start.getMonth();
 
     fetchMonthlyDataMutation.mutate(
       { year, month },
@@ -199,7 +199,7 @@ const Calendar = () => {
     if (user.isAuthenticated && isInitialDataSuccess) {
       const currentDate = new Date();
       const year = currentDate.getFullYear();
-      const month = currentDate.getMonth() + 1;
+      const month = currentDate.getMonth();
 
       if (events.length === 0) {
         fetchMonthlyDataMutation.mutate(
