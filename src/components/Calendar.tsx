@@ -23,6 +23,17 @@ const COLORS = [
   "E6D3FF",
 ];
 
+// EventType 인터페이스 정의
+interface EventType {
+  title: string;
+  start: Date;
+  end: Date;
+  backgroundColor: string;
+  textColor: string;
+  extendedProps: any;
+  platformLogo: string;
+}
+
 // 플랫폼별 로고
 const PLATFORM_LOGOS: Record<string, string> = {
   hourplace: "/assets/OurPlace-Logo.png",
@@ -30,13 +41,16 @@ const PLATFORM_LOGOS: Record<string, string> = {
 };
 
 const Calendar = () => {
-  const { fetchMonthlyDataMutation, isInitialDataSuccess, refetchInitialData } = useGetDataQuery();
-  const [events, setEvents] = useState([]);
+  const { fetchMonthlyDataMutation, isInitialDataSuccess, refetchInitialData } =
+    useGetDataQuery();
+  const [events, setEvents] = useState<EventType[]>([]); // EventType[]으로 상태 타입 지정
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const [sidebarContent, setSidebarContent] = useState("default");
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
-  const [locationColors, setLocationColors] = useState<Record<string, string>>({});
+  const [locationColors, setLocationColors] = useState<Record<string, string>>(
+    {},
+  );
   const calendarRef = useRef<FullCalendar | null>(null);
   const user = useRecoilValue(userState);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -116,7 +130,10 @@ const Calendar = () => {
             console.log("POST 요청 및 스피너 멈추기 완료");
           })
           .catch((error) => {
-            console.error("POST 요청 중 오류 발생 또는 스피너 멈추기 실패:", error);
+            console.error(
+              "POST 요청 중 오류 발생 또는 스피너 멈추기 실패:",
+              error,
+            );
           });
       })
       .catch((error) => {
@@ -149,43 +166,47 @@ const Calendar = () => {
     }
 
     Promise.all(
-      monthsToRequest.map(({ year, month }) =>
-        new Promise<any[]>((resolve, reject) => {
-          fetchMonthlyDataMutation.mutate(
-            { year, month },
-            {
-              onSuccess: (data) => {
-                const updatedEvents = data.contents.map((event: any) => {
-                  const locationColor = getLocationColor(event.location);
-                  const platformLogo = PLATFORM_LOGOS[event.platform] || "";
+      monthsToRequest.map(
+        ({ year, month }) =>
+          new Promise<EventType[]>((resolve, reject) => {
+            fetchMonthlyDataMutation.mutate(
+              { year, month },
+              {
+                onSuccess: (data) => {
+                  const updatedEvents = data.contents.map((event: any) => {
+                    const locationColor = getLocationColor(event.location);
+                    const platformLogo = PLATFORM_LOGOS[event.platform] || "";
 
-                  const startTime = new Date(event.startTime);
-                  const endTime = new Date(event.endTime);
+                    const startTime = new Date(event.startTime);
+                    const endTime = new Date(event.endTime);
 
-                  return {
-                    title: event.location,
-                    start: startTime,
-                    end: endTime,
-                    backgroundColor: locationColor,
-                    textColor: "#000000",
-                    extendedProps: { ...event },
-                    platformLogo,
-                  };
-                });
-                resolve(updatedEvents);
+                    return {
+                      title: event.location,
+                      start: startTime,
+                      end: endTime,
+                      backgroundColor: locationColor,
+                      textColor: "#000000",
+                      extendedProps: { ...event },
+                      platformLogo,
+                    };
+                  });
+                  resolve(updatedEvents);
+                },
+                onError: (error) => {
+                  console.error(
+                    `월별 데이터 업데이트 실패: ${year}-${month}`,
+                    error,
+                  );
+                  reject(error);
+                },
               },
-              onError: (error) => {
-                console.error(`월별 데이터 업데이트 실패: ${year}-${month}`, error);
-                reject(error);
-              },
-            }
-          );
-        })
-      )
+            );
+          }),
+      ),
     )
       .then((allEvents) => {
-        const mergedEvents = allEvents.flat();
-        setEvents(mergedEvents); // 상태 업데이트
+        const mergedEvents: EventType[] = allEvents.flat();
+        setEvents(mergedEvents);
       })
       .catch((error) => {
         console.error("데이터 요청 중 오류 발생:", error);
@@ -194,7 +215,8 @@ const Calendar = () => {
 
   const getLocationColor = (location: string) => {
     if (!locationColors[location]) {
-      const randomColor = COLORS[Object.keys(locationColors).length % COLORS.length];
+      const randomColor =
+        COLORS[Object.keys(locationColors).length % COLORS.length];
       setLocationColors((prevColors) => ({
         ...prevColors,
         [location]: randomColor,
@@ -216,6 +238,7 @@ const Calendar = () => {
       const currentDate = new Date();
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth() + 1;
+
       if (events.length === 0) {
         fetchMonthlyDataMutation.mutate(
           { year, month },
@@ -238,7 +261,7 @@ const Calendar = () => {
               });
               setEvents(updatedEvents);
             },
-          }
+          },
         );
       }
     }
@@ -248,7 +271,7 @@ const Calendar = () => {
     <div className="flex h-screen w-full">
       {isSyncing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 bg-gray-700">
-          <Spinner /> {/* 연동 진행 중일 때 Spinner 표시 */}
+          <Spinner />
         </div>
       )}
       <LeftSidebar
