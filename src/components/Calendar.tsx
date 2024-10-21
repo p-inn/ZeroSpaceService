@@ -224,6 +224,7 @@ const Calendar = () => {
                 };
               });
               setEvents(updatedEvents);
+              console.log(setEvents);
             },
           },
         );
