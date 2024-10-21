@@ -48,9 +48,6 @@ const Calendar = () => {
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const [sidebarContent, setSidebarContent] = useState("default");
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
-  const [locationColors, setLocationColors] = useState<Record<string, string>>(
-    {},
-  );
   const calendarRef = useRef<FullCalendar | null>(null);
   const user = useRecoilValue(userState);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -73,11 +70,13 @@ const Calendar = () => {
   useEffect(() => {
     if (calendarRef.current) {
       const calendarApi = calendarRef.current.getApi();
+
       setTimeout(() => {
         calendarApi.updateSize();
+        calendarApi.refetchEvents();
       }, 300);
     }
-  }, [isSidebarOpen, isLeftSidebarOpen]);
+  }, [isSidebarOpen, isLeftSidebarOpen, events]);
 
   const handleSyncUpdate = () => {
     if (isSyncing) return;
@@ -97,7 +96,7 @@ const Calendar = () => {
                 onSuccess: (postData) => {
                   console.log("월별 데이터 업데이트 완료: ", postData);
                   const updatedEvents = postData.contents.map((event: any) => {
-                    const locationColor = getLocationColor(event.location);
+                    const locationColor = getRandomColor();
                     const platformLogo = PLATFORM_LOGOS[event.platform] || "";
                     const startTime = new Date(event.startTime);
                     const endTime = new Date(event.endTime);
@@ -142,6 +141,11 @@ const Calendar = () => {
       });
   };
 
+  const getRandomColor = () => {
+    const randomIndex = Math.floor(Math.random() * COLORS.length);
+    return COLORS[randomIndex];
+  };
+
   const handleDatesSet = (info: any) => {
     if (!user.isAuthenticated) return;
 
@@ -174,7 +178,7 @@ const Calendar = () => {
               {
                 onSuccess: (data) => {
                   const updatedEvents = data.contents.map((event: any) => {
-                    const locationColor = getLocationColor(event.location);
+                    const locationColor = getRandomColor();
                     const platformLogo = PLATFORM_LOGOS[event.platform] || "";
 
                     const startTime = new Date(event.startTime);
@@ -213,18 +217,6 @@ const Calendar = () => {
       });
   };
 
-  const getLocationColor = (location: string) => {
-    if (!locationColors[location]) {
-      const randomColor =
-        COLORS[Object.keys(locationColors).length % COLORS.length];
-      setLocationColors((prevColors) => ({
-        ...prevColors,
-        [location]: randomColor,
-      }));
-    }
-    return locationColors[location];
-  };
-
   const handleEventClick = (clickInfo: any) => {
     setSelectedEvent(clickInfo.event.extendedProps);
   };
@@ -245,7 +237,7 @@ const Calendar = () => {
           {
             onSuccess: (data) => {
               const updatedEvents = data.contents.map((event: any) => {
-                const locationColor = getLocationColor(event.location);
+                const locationColor = getRandomColor();
                 const platformLogo = PLATFORM_LOGOS[event.platform] || "";
                 const startTime = new Date(event.startTime);
                 const endTime = new Date(event.endTime);
@@ -315,6 +307,13 @@ const Calendar = () => {
             info.el.style.backgroundColor = backgroundColor;
             info.el.style.color = `${textColor} !important`;
             info.el.style.padding = "5px";
+            info.el.style.whiteSpace = "nowrap";
+            info.el.style.overflow = "hidden";
+            info.el.style.textOverflow = "ellipsis";
+            if (info.event.allDay) {
+              info.el.style.backgroundColor = backgroundColor;
+              info.el.style.color = textColor;
+            }
           }}
           eventClick={handleEventClick}
           timeZone="local"
@@ -346,7 +345,7 @@ const Calendar = () => {
               location={selectedEvent.location}
               process={selectedEvent.process}
               onClose={handleCloseModal}
-              locationColor={getLocationColor(selectedEvent.location)}
+              locationColor={getRandomColor()}
             />
           </div>
         </div>
