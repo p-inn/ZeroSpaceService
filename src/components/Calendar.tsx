@@ -254,7 +254,6 @@ const Calendar = () => {
             // 달력 이벤트 강제 리프레시
             if (calendarRef.current) {
               const calendarApi = calendarRef.current.getApi();
-              
               // 상태 업데이트 이후 강제로 달력 리프레시
               setTimeout(() => {
                 calendarApi.refetchEvents();
