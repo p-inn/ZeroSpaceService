@@ -73,10 +73,9 @@ const Calendar = () => {
 
       setTimeout(() => {
         calendarApi.updateSize();
-        calendarApi.refetchEvents();
       }, 300);
     }
-  }, [isSidebarOpen, isLeftSidebarOpen, events]);
+  }, [isSidebarOpen, isLeftSidebarOpen]);
 
   const handleSyncUpdate = () => {
     if (isSyncing) return;
@@ -230,32 +229,35 @@ const Calendar = () => {
       const currentDate = new Date();
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth() + 1;
-
-      if (events.length === 0) {
-        fetchMonthlyDataMutation.mutate(
-          { year, month },
-          {
-            onSuccess: (data) => {
-              const updatedEvents = data.contents.map((event: any) => {
-                const locationColor = getRandomColor();
-                const platformLogo = PLATFORM_LOGOS[event.platform] || "";
-                const startTime = new Date(event.startTime);
-                const endTime = new Date(event.endTime);
-                return {
-                  title: event.location,
-                  start: startTime,
-                  end: endTime,
-                  backgroundColor: locationColor,
-                  textColor: "#000000",
-                  extendedProps: { ...event },
-                  platformLogo,
-                };
-              });
-              setEvents(updatedEvents);
-            },
+      // 이벤트 상태에 상관없이 로그인 성공 시마다 요청
+      fetchMonthlyDataMutation.mutate(
+        { year, month },
+        {
+          onSuccess: (data) => {
+            const updatedEvents = data.contents.map((event: any) => {
+              const locationColor = getRandomColor();
+              const platformLogo = PLATFORM_LOGOS[event.platform] || "";
+              const startTime = new Date(event.startTime);
+              const endTime = new Date(event.endTime);
+              return {
+                title: event.location,
+                start: startTime,
+                end: endTime,
+                backgroundColor: locationColor,
+                textColor: "#000000",
+                extendedProps: { ...event },
+                platformLogo,
+              };
+            });
+            setEvents(updatedEvents);
+            // 달력 이벤트 강제 리프레시
+            if (calendarRef.current) {
+              const calendarApi = calendarRef.current.getApi();
+              calendarApi.refetchEvents();
+            }
           },
-        );
-      }
+        },
+      );
     }
   }, [user.isAuthenticated, isInitialDataSuccess]);
 
