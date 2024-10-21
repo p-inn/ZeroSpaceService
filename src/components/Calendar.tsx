@@ -45,8 +45,7 @@ export const PLATFORM_LOGOS: Record<string, string> = {
 };
 
 const Calendar = () => {
-  const { fetchMonthlyDataMutation, isInitialDataSuccess, refetchInitialData } =
-    useGetDataQuery();
+  const { fetchMonthlyDataMutation, refetchInitialData } = useGetDataQuery();
   const [events, setEvents] = useState<EventType[]>([]); // EventType[]으로 상태 타입 지정
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
@@ -223,51 +222,44 @@ const Calendar = () => {
     setSelectedEvent(null);
   };
 
-  useEffect(() => {
-    if (user.isAuthenticated && isInitialDataSuccess) {
-      console.log("1");
-      const currentDate = new Date();
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth() + 1;
-      // 이벤트 상태에 상관없이 로그인 성공 시마다 요청
-      fetchMonthlyDataMutation.mutate(
-        { year, month },
-        {
-          onSuccess: (data) => {
-            const updatedEvents = data.contents.map((event: any) => {
-              const locationColor = getRandomColor();
-              const platformLogo = PLATFORM_LOGOS[event.platform] || "";
-              const startTime = new Date(event.startTime);
-              const endTime = new Date(event.endTime);
-              return {
-                title: event.location,
-                start: startTime,
-                end: endTime,
-                backgroundColor: locationColor,
-                textColor: "#000000",
-                extendedProps: { ...event },
-                platformLogo,
-              };
-            });
-            setEvents(updatedEvents);
-            console.log(updatedEvents, "업데이트 이벤트");
-            // 달력 이벤트 강제 리프레시
-            if (calendarRef.current) {
-              const calendarApi = calendarRef.current.getApi();
-              // 상태 업데이트 이후 강제로 달력 리프레시
-              setTimeout(() => {
-                calendarApi.refetchEvents();
-              }, 300);
-            }
-          },
+  const handleGetUpdate = () => {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1;
+    // 월별 데이터를 가져오는 POST 요청
+    fetchMonthlyDataMutation.mutate(
+      { year, month },
+      {
+        onSuccess: (postData) => {
+          console.log("월별 데이터 업데이트 완료: ", postData);
+          const updatedEvents = postData.contents.map((event: any) => {
+            const locationColor = getRandomColor();
+            const platformLogo = PLATFORM_LOGOS[event.platform] || "";
+            const startTime = new Date(event.startTime);
+            const endTime = new Date(event.endTime);
+            return {
+              title: event.location,
+              start: startTime,
+              end: endTime,
+              backgroundColor: locationColor,
+              textColor: "#000000",
+              extendedProps: { ...event },
+              platformLogo,
+            };
+          });
+          // 기존 이벤트와 병합하거나 새로운 이벤트로 설정
+          setEvents((prevEvents) => [...prevEvents, ...updatedEvents]);
+          console.log("이벤트 업데이트 완료");
         },
-      );
-    }
-  }, [user.isAuthenticated, isInitialDataSuccess]);
+        onError: (error) => {
+          console.error("월별 데이터 업데이트 실패: ", error);
+        },
+      },
+    );
+  };
 
   return (
     <div className="flex h-screen w-full">
-      <OAuthRedirect setEvents={setEvents} />
       {isSyncing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 bg-gray-700">
           <Spinner />
@@ -336,6 +328,7 @@ const Calendar = () => {
         content={sidebarContent}
         toggleSidebar={toggleSidebar}
         onSyncUpdate={handleSyncUpdate}
+        onGetUpdate={handleGetUpdate}
         toggleSidebarContent={toggleSidebarContent}
       />
       {selectedEvent && selectedEvent.reservationNumber && (
