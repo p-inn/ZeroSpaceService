@@ -226,6 +226,7 @@ const Calendar = () => {
 
   useEffect(() => {
     if (user.isAuthenticated && isInitialDataSuccess) {
+      console.log("1");
       const currentDate = new Date();
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth() + 1;
@@ -250,7 +251,7 @@ const Calendar = () => {
               };
             });
             setEvents(updatedEvents);
-            console.log(setEvents, "업데이트 이벤트");
+            console.log(updatedEvents, "업데이트 이벤트");
             // 달력 이벤트 강제 리프레시
             if (calendarRef.current) {
               const calendarApi = calendarRef.current.getApi();
@@ -263,7 +264,7 @@ const Calendar = () => {
         },
       );
     }
-  }, [user.isAuthenticated, isInitialDataSuccess, events]);
+  }, [user.isAuthenticated, isInitialDataSuccess]);
 
   return (
     <div className="flex h-screen w-full">
