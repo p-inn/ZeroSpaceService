@@ -142,6 +142,9 @@ const Calendar = () => {
 
     const year = info.start.getFullYear();
     const month = info.start.getMonth() + 1; // 1을 더해 1부터 12까지 맞춤
+    console.log("info.start (Date object):", info.start);
+    console.log("info.start.getFullYear():", info.start.getFullYear());
+    console.log("info.start.getMonth() (0-based):", info.start.getMonth());
 
     fetchMonthlyDataMutation.mutate(
       { year, month },
@@ -287,6 +290,7 @@ const Calendar = () => {
             }
           }}
           eventClick={handleEventClick}
+          timeZone="local"
           datesSet={handleDatesSet}
           dayCellContent={(dayCellArg) => (
             <span>{dayCellArg.date.getDate()}</span>
