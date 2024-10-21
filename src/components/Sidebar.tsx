@@ -167,12 +167,17 @@ const RightSidebar: React.FC<SidebarProps> = ({
           <div>
             <div className="flex justify-between">
               <h2 className="text-2xl font-bold mb-6">연동 플랫폼 관리</h2>
-              <button
-                className="btn btn-active btn-neutral btn-sm rounded-3xl text-sm text-white"
-                onClick={onGetUpdate}
-              >
-                기존 정보 불러오기
-              </button>
+              {user.isAuthenticated &&
+              (spaceCloudSuccess || ourPlaceSuccess) ? (
+                <button
+                  className="btn btn-active btn-neutral btn-xs rounded-full text-xs text-white"
+                  onClick={onGetUpdate}
+                >
+                  기존 정보 불러오기
+                </button>
+              ) : (
+                ""
+              )}
             </div>
             {/* 스페이스 클라우드 계정 관리 */}
             <AccountSaveForm
