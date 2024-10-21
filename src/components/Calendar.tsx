@@ -14,18 +14,25 @@ import Spinner from "./Spinner";
 
 // 색상 배열
 const COLORS = [
-  "#FF0707",
-  "#157938",
-  "#00CF03",
-  "#00E1FF",
+  "#FFB4B4",
+  "#FFC198",
+  "#D3FF80",
+  "#B9FFEB",
   "#006FFF",
   "#BB00FF",
-  "F8D701",
-  "FF8107",
-  "FF9CCC",
-  "E0B5FF",
-  "FFC756",
+  "ADE8FF",
+  "E6D3FF",
 ];
+
+interface EventType {
+  title: string;
+  start: Date;
+  end: Date;
+  backgroundColor: string;
+  textColor: string;
+  extendedProps: any;
+  platformLogo: string;
+}
 
 // 플랫폼별 로고
 const PLATFORM_LOGOS: Record<string, string> = {
@@ -36,7 +43,7 @@ const PLATFORM_LOGOS: Record<string, string> = {
 const Calendar = () => {
   const { fetchMonthlyDataMutation, isInitialDataSuccess, refetchInitialData } =
     useGetDataQuery();
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState<EventType[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const [sidebarContent, setSidebarContent] = useState("default");
@@ -97,11 +104,11 @@ const Calendar = () => {
                     const startTime = new Date(event.startTime);
                     const endTime = new Date(event.endTime);
                     return {
-                      title: event.location, // 로케이션만 표시
+                      title: event.location,
                       start: startTime,
                       end: endTime,
                       backgroundColor: locationColor,
-                      textColor: "#ffffff", // 글씨를 흰색으로 설정
+                      textColor: "#000000",
                       extendedProps: { ...event },
                       platformLogo,
                     };
@@ -140,40 +147,75 @@ const Calendar = () => {
   const handleDatesSet = (info: any) => {
     if (!user.isAuthenticated) return;
 
-    // 중앙일 계산 (info.start와 info.end의 중간 날짜)
-    const middleDate = new Date(
-      (info.start.getTime() + info.end.getTime()) / 2,
-    );
-    const year = middleDate.getFullYear();
-    const month = middleDate.getMonth() + 1; // 0부터 시작하므로 1 더하기
+    const startMonth = info.start.getMonth() + 1; // 시작 달 (0부터 시작하므로 +1)
+    const endMonth = info.end.getMonth() + 1; // 끝 달 (0부터 시작하므로 +1)
+    const startYear = info.start.getFullYear(); // 시작 연도
+    const endYear = info.end.getFullYear(); // 끝 연도
 
-    console.log("요청할 연도와 월:", { year, month });
+    // 요청할 달 목록
+    const monthsToRequest: { year: number; month: number }[] = [];
 
-    fetchMonthlyDataMutation.mutate(
-      { year, month },
-      {
-        onSuccess: (data) => {
-          const updatedEvents = data.contents.map((event: any) => {
-            const locationColor = getLocationColor(event.location);
-            const platformLogo = PLATFORM_LOGOS[event.platform] || "";
+    if (startYear === endYear) {
+      for (let month = startMonth; month <= endMonth; month++) {
+        monthsToRequest.push({ year: startYear, month });
+      }
+    } else {
+      for (let month = startMonth; month <= 12; month++) {
+        monthsToRequest.push({ year: startYear, month });
+      }
+      for (let month = 1; month <= endMonth; month++) {
+        monthsToRequest.push({ year: endYear, month });
+      }
+    }
 
-            const startTime = new Date(event.startTime);
-            const endTime = new Date(event.endTime);
+    // 각 달에 대한 데이터 요청을 병렬로 처리
+    Promise.all(
+      monthsToRequest.map(
+        ({ year, month }) =>
+          new Promise<EventType[]>((resolve, reject) => {
+            fetchMonthlyDataMutation.mutate(
+              { year, month },
+              {
+                onSuccess: (data) => {
+                  const updatedEvents = data.contents.map((event: any) => {
+                    const locationColor = getLocationColor(event.location);
+                    const platformLogo = PLATFORM_LOGOS[event.platform] || "";
 
-            return {
-              title: event.location, // 로케이션만 표시
-              start: startTime,
-              end: endTime,
-              backgroundColor: locationColor,
-              textColor: "#ffffff", // 글씨를 흰색으로 설정
-              extendedProps: { ...event },
-              platformLogo,
-            };
-          });
-          setEvents(updatedEvents);
-        },
-      },
-    );
+                    const startTime = new Date(event.startTime);
+                    const endTime = new Date(event.endTime);
+
+                    return {
+                      title: event.location,
+                      start: startTime,
+                      end: endTime,
+                      backgroundColor: locationColor,
+                      textColor: "#000000",
+                      extendedProps: { ...event },
+                      platformLogo,
+                    };
+                  });
+                  resolve(updatedEvents);
+                },
+                onError: (error) => {
+                  console.error(
+                    `월별 데이터 업데이트 실패: ${year}-${month}`,
+                    error,
+                  );
+                  reject(error);
+                },
+              },
+            );
+          }),
+      ),
+    )
+      .then((allEvents) => {
+        // 모든 월에 대한 데이터를 합쳐서 하나의 배열로 만들고 상태 업데이트
+        const mergedEvents: EventType[] = allEvents.flat(); // 타입 지정
+        setEvents(mergedEvents);
+      })
+      .catch((error) => {
+        console.error("데이터 요청 중 오류 발생:", error);
+      });
   };
 
   // 각 location에 대해 색상을 할당
@@ -220,7 +262,7 @@ const Calendar = () => {
                   start: startTime,
                   end: endTime,
                   backgroundColor: locationColor,
-                  textColor: "#ffffff",
+                  textColor: "#000000",
                   extendedProps: { ...event },
                   platformLogo,
                 };
@@ -285,11 +327,11 @@ const Calendar = () => {
             const textColor = info.event.textColor;
             // 배경색 및 글자색 설정
             info.el.style.backgroundColor = backgroundColor;
-            info.el.style.color = textColor;
+            info.el.style.color = `${textColor} !important`;
             info.el.style.padding = "5px";
             if (info.event.allDay) {
               info.el.style.backgroundColor = backgroundColor;
-              info.el.style.color = textColor;
+              info.el.style.color = `${textColor} !important`;
             }
           }}
           eventClick={handleEventClick}

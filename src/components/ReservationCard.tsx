@@ -36,7 +36,7 @@ const ReservationCard: React.FC<ReservationCardProps> = ({
 }) => {
   return (
     <div
-      className="max-w-md p-6 bg-white rounded-lg shadow-xl relative"
+      className="max-w-xl p-6 bg-white rounded-lg shadow-xl relative"
       style={{ borderTopColor: locationColor, borderTopWidth: "4px" }}
     >
       {/* 닫기 버튼 */}
