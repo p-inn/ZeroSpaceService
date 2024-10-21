@@ -140,11 +140,14 @@ const Calendar = () => {
   const handleDatesSet = (info: any) => {
     if (!user.isAuthenticated) return;
 
-    const year = info.start.getFullYear();
-    const month = info.start.getMonth() + 1; // 1을 더해 1부터 12까지 맞춤
-    console.log("info.start (Date object):", info.start);
-    console.log("info.start.getFullYear():", info.start.getFullYear());
-    console.log("info.start.getMonth() (0-based):", info.start.getMonth());
+    // 중앙일 계산 (info.start와 info.end의 중간 날짜)
+    const middleDate = new Date(
+      (info.start.getTime() + info.end.getTime()) / 2,
+    );
+    const year = middleDate.getFullYear();
+    const month = middleDate.getMonth() + 1; // 0부터 시작하므로 1 더하기
+
+    console.log("요청할 연도와 월:", { year, month });
 
     fetchMonthlyDataMutation.mutate(
       { year, month },
