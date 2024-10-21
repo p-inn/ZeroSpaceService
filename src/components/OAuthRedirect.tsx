@@ -6,7 +6,6 @@ import { useSetRecoilState } from "recoil";
 import { userState } from "@/recoil/atoms";
 import { defaultAxios } from "@/app/api/axiosInstance";
 import useToast from "@/app/hooks/useToast";
-import useGetDataQuery from "@/app/hooks/account/useGetDataQuery";
 
 export function OAuthRedirect() {
   const setUserState = useSetRecoilState(userState);
@@ -14,7 +13,7 @@ export function OAuthRedirect() {
   const searchParams = useSearchParams();
   const userId = searchParams.get("userId");
   const { toastSuccess } = useToast();
-  const { fetchMonthlyDataMutation } = useGetDataQuery();
+
   useEffect(() => {
     const getUserInfo = async () => {
       try {

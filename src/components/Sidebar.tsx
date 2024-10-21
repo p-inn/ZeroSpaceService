@@ -167,7 +167,10 @@ const RightSidebar: React.FC<SidebarProps> = ({
           <div>
             <div className="flex justify-between">
               <h2 className="text-2xl font-bold mb-6">연동 플랫폼 관리</h2>
-              <button className="btn badge-lg text-white" onClick={onGetUpdate}>
+              <button
+                className="btn btn-active btn-neutral btn-sm rounded-3xl text-sm text-white"
+                onClick={onGetUpdate}
+              >
                 기존 정보 불러오기
               </button>
             </div>
