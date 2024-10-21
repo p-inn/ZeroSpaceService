@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useRef, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -24,6 +23,7 @@ const COLORS = [
   "E6D3FF",
 ];
 
+// EventType 인터페이스 정의
 interface EventType {
   title: string;
   start: Date;
@@ -43,7 +43,7 @@ const PLATFORM_LOGOS: Record<string, string> = {
 const Calendar = () => {
   const { fetchMonthlyDataMutation, isInitialDataSuccess, refetchInitialData } =
     useGetDataQuery();
-  const [events, setEvents] = useState<EventType[]>([]);
+  const [events, setEvents] = useState<EventType[]>([]); // EventType[]으로 상태 타입 지정
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const [sidebarContent, setSidebarContent] = useState("default");
@@ -56,14 +56,14 @@ const Calendar = () => {
   const [isSyncing, setIsSyncing] = useState(false);
 
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen); // 열려있으면 닫고, 닫혀있으면 열기
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
   const toggleSidebarContent = (content: string) => {
     if (!isSidebarOpen) {
-      setIsSidebarOpen(true); // 사이드바가 닫혀있다면 열기
+      setIsSidebarOpen(true);
     }
-    setSidebarContent(content); // 항상 콘텐츠는 업데이트
+    setSidebarContent(content);
   };
 
   const toggleLeftSidebar = () => {
@@ -80,17 +80,15 @@ const Calendar = () => {
   }, [isSidebarOpen, isLeftSidebarOpen]);
 
   const handleSyncUpdate = () => {
-    if (isSyncing) return; // 이미 연동 업데이트 중이면 실행하지 않음
-    setIsSyncing(true); // 스피너 시작
+    if (isSyncing) return;
+    setIsSyncing(true);
     const currentDate = new Date();
     const year = currentDate.getFullYear();
-    const month = currentDate.getMonth() + 1; // 1을 더해 1부터 12까지 맞춤
-    // GET 요청: 초기 데이터 가져오기
+    const month = currentDate.getMonth() + 1;
+
     refetchInitialData()
       .then((initialData) => {
         console.log("초기 데이터 가져오기 성공: ", initialData);
-
-        // GET 요청 성공 후, POST 요청과 스피너 멈추기를 동시에 실행
         Promise.all([
           new Promise((resolve, reject) => {
             fetchMonthlyDataMutation.mutate(
@@ -113,18 +111,18 @@ const Calendar = () => {
                       platformLogo,
                     };
                   });
-                  setEvents(updatedEvents);
-                  resolve(postData); // 성공 시 프로미스 해결
+                  setEvents((prevEvents) => [...prevEvents, ...updatedEvents]); // 기존 이벤트와 병합
+                  resolve(postData);
                 },
                 onError: (error) => {
                   console.error("월별 데이터 업데이트 실패: ", error);
-                  reject(error); // 실패 시 프로미스 거부
+                  reject(error);
                 },
               },
             );
           }),
           new Promise((resolve) => {
-            setIsSyncing(false); // 스피너 멈추기
+            setIsSyncing(false);
             resolve(true);
           }),
         ])
@@ -140,19 +138,18 @@ const Calendar = () => {
       })
       .catch((error) => {
         console.error("초기 데이터 가져오기 실패: ", error);
-        setIsSyncing(false); // GET 요청 실패 시 스피너 종료
+        setIsSyncing(false);
       });
   };
 
   const handleDatesSet = (info: any) => {
     if (!user.isAuthenticated) return;
 
-    const startMonth = info.start.getMonth() + 1; // 시작 달 (0부터 시작하므로 +1)
-    const endMonth = info.end.getMonth() + 1; // 끝 달 (0부터 시작하므로 +1)
-    const startYear = info.start.getFullYear(); // 시작 연도
-    const endYear = info.end.getFullYear(); // 끝 연도
+    const startMonth = info.start.getMonth() + 1;
+    const endMonth = info.end.getMonth() + 1;
+    const startYear = info.start.getFullYear();
+    const endYear = info.end.getFullYear();
 
-    // 요청할 달 목록
     const monthsToRequest: { year: number; month: number }[] = [];
 
     if (startYear === endYear) {
@@ -168,7 +165,6 @@ const Calendar = () => {
       }
     }
 
-    // 각 달에 대한 데이터 요청을 병렬로 처리
     Promise.all(
       monthsToRequest.map(
         ({ year, month }) =>
@@ -209,8 +205,7 @@ const Calendar = () => {
       ),
     )
       .then((allEvents) => {
-        // 모든 월에 대한 데이터를 합쳐서 하나의 배열로 만들고 상태 업데이트
-        const mergedEvents: EventType[] = allEvents.flat(); // 타입 지정
+        const mergedEvents: EventType[] = allEvents.flat();
         setEvents(mergedEvents);
       })
       .catch((error) => {
@@ -218,7 +213,6 @@ const Calendar = () => {
       });
   };
 
-  // 각 location에 대해 색상을 할당
   const getLocationColor = (location: string) => {
     if (!locationColors[location]) {
       const randomColor =
@@ -243,7 +237,7 @@ const Calendar = () => {
     if (user.isAuthenticated && isInitialDataSuccess) {
       const currentDate = new Date();
       const year = currentDate.getFullYear();
-      const month = currentDate.getMonth() + 1; // 1을 더해 1부터 12까지 맞춤
+      const month = currentDate.getMonth() + 1;
 
       if (events.length === 0) {
         fetchMonthlyDataMutation.mutate(
@@ -253,12 +247,10 @@ const Calendar = () => {
               const updatedEvents = data.contents.map((event: any) => {
                 const locationColor = getLocationColor(event.location);
                 const platformLogo = PLATFORM_LOGOS[event.platform] || "";
-
                 const startTime = new Date(event.startTime);
                 const endTime = new Date(event.endTime);
-
                 return {
-                  title: event.location, // 로케이션 이름만 표시
+                  title: event.location,
                   start: startTime,
                   end: endTime,
                   backgroundColor: locationColor,
@@ -279,7 +271,7 @@ const Calendar = () => {
     <div className="flex h-screen w-full">
       {isSyncing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 bg-gray-700">
-          <Spinner /> {/* 연동 진행 중일 때 Spinner 표시 */}
+          <Spinner />
         </div>
       )}
       <LeftSidebar
@@ -288,9 +280,7 @@ const Calendar = () => {
         events={events}
       />
       <div
-        className={`transition-all duration-300 ${
-          isSidebarOpen || isLeftSidebarOpen ? "w-[calc(100%-256px)]" : "w-full"
-        }`}
+        className={`transition-all duration-300 ${isSidebarOpen || isLeftSidebarOpen ? "w-[calc(100%-256px)]" : "w-full"}`}
         style={{
           marginLeft: isLeftSidebarOpen ? "256px" : "0",
           marginRight: isSidebarOpen ? "256px" : "0",
@@ -306,10 +296,9 @@ const Calendar = () => {
             center: "",
             right: "",
           }}
-          events={events} // FullCalendar에 이벤트 전달
+          events={events}
           eventContent={(eventInfo) => (
             <div className="flex items-center justify-start h-full px-2">
-              {/* 플랫폼 로고 */}
               {eventInfo.event.extendedProps.platformLogo && (
                 <img
                   src={eventInfo.event.extendedProps.platformLogo}
@@ -317,22 +306,15 @@ const Calendar = () => {
                   className="w-4 h-4 mr-2"
                 />
               )}
-              {/* 로케이션 이름 */}
               <span>{eventInfo.event.title}</span>
             </div>
           )}
           eventDidMount={(info) => {
-            // 이벤트 스타일링
             const backgroundColor = info.event.backgroundColor;
             const textColor = info.event.textColor;
-            // 배경색 및 글자색 설정
             info.el.style.backgroundColor = backgroundColor;
             info.el.style.color = `${textColor} !important`;
             info.el.style.padding = "5px";
-            if (info.event.allDay) {
-              info.el.style.backgroundColor = backgroundColor;
-              info.el.style.color = `${textColor} !important`;
-            }
           }}
           eventClick={handleEventClick}
           timeZone="local"
@@ -342,7 +324,6 @@ const Calendar = () => {
           )}
         />
       </div>
-
       <RightSidebar
         isOpen={isSidebarOpen}
         isSyncing={isSyncing}
@@ -351,10 +332,8 @@ const Calendar = () => {
         onSyncUpdate={handleSyncUpdate}
         toggleSidebarContent={toggleSidebarContent}
       />
-
       {selectedEvent && selectedEvent.reservationNumber && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
-          {/* 모달 박스 */}
           <div className="bg-white rounded-lg shadow-xl">
             <ReservationCard
               reservationNumber={selectedEvent.reservationNumber}
