@@ -77,7 +77,7 @@ const Calendar = () => {
     setIsSyncing(true); // 스피너 시작
     const currentDate = new Date();
     const year = currentDate.getFullYear();
-    const month = currentDate.getMonth() + 1;
+    const month = currentDate.getMonth() + 1; // 1을 더해 1부터 12까지 맞춤
     // GET 요청: 초기 데이터 가져오기
     refetchInitialData()
       .then((initialData) => {
@@ -136,16 +136,12 @@ const Calendar = () => {
         setIsSyncing(false); // GET 요청 실패 시 스피너 종료
       });
   };
-  // 확인용 디버깅 코드 추가
-  useEffect(() => {
-    console.log("isSyncing 상태:", isSyncing);
-  }, [isSyncing]);
 
   const handleDatesSet = (info: any) => {
     if (!user.isAuthenticated) return;
 
     const year = info.start.getFullYear();
-    const month = info.start.getMonth();
+    const month = info.start.getMonth() + 1; // 1을 더해 1부터 12까지 맞춤
 
     fetchMonthlyDataMutation.mutate(
       { year, month },
@@ -199,7 +195,7 @@ const Calendar = () => {
     if (user.isAuthenticated && isInitialDataSuccess) {
       const currentDate = new Date();
       const year = currentDate.getFullYear();
-      const month = currentDate.getMonth();
+      const month = currentDate.getMonth() + 1; // 1을 더해 1부터 12까지 맞춤
 
       if (events.length === 0) {
         fetchMonthlyDataMutation.mutate(
@@ -224,7 +220,6 @@ const Calendar = () => {
                 };
               });
               setEvents(updatedEvents);
-              console.log(setEvents);
             },
           },
         );
