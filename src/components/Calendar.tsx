@@ -10,6 +10,7 @@ import ReservationCard from "./ReservationCard";
 import { useRecoilValue } from "recoil";
 import { userState } from "@/recoil/atoms";
 import Spinner from "./Spinner";
+import { OAuthRedirect } from "./OAuthRedirect";
 
 // 색상 배열
 const COLORS = [
@@ -22,7 +23,10 @@ const COLORS = [
   "ADE8FF",
   "E6D3FF",
 ];
-
+export const getRandomColor = () => {
+  const randomIndex = Math.floor(Math.random() * COLORS.length);
+  return COLORS[randomIndex];
+};
 // EventType 인터페이스 정의
 interface EventType {
   title: string;
@@ -35,7 +39,7 @@ interface EventType {
 }
 
 // 플랫폼별 로고
-const PLATFORM_LOGOS: Record<string, string> = {
+export const PLATFORM_LOGOS: Record<string, string> = {
   hourplace: "/assets/OurPlace-Logo.png",
   spacecloud: "/assets/SpaceCloud-Logo.png",
 };
@@ -138,11 +142,6 @@ const Calendar = () => {
         console.error("초기 데이터 가져오기 실패: ", error);
         setIsSyncing(false);
       });
-  };
-
-  const getRandomColor = () => {
-    const randomIndex = Math.floor(Math.random() * COLORS.length);
-    return COLORS[randomIndex];
   };
 
   const handleDatesSet = (info: any) => {
@@ -268,6 +267,7 @@ const Calendar = () => {
 
   return (
     <div className="flex h-screen w-full">
+      <OAuthRedirect setEvents={setEvents} />
       {isSyncing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 bg-gray-700">
           <Spinner />
@@ -362,3 +362,4 @@ const Calendar = () => {
 };
 
 export default Calendar;
+export type { EventType };
