@@ -14,6 +14,7 @@ interface SidebarProps {
   toggleSidebar: (content: string) => void;
   toggleSidebarContent: (content: string) => void;
   onSyncUpdate: () => void;
+  onGetUpdate: () => void;
   isSyncing: boolean;
 }
 
@@ -22,6 +23,7 @@ const RightSidebar: React.FC<SidebarProps> = ({
   content,
   toggleSidebar,
   onSyncUpdate,
+  onGetUpdate,
   isSyncing,
   toggleSidebarContent,
 }) => {
@@ -163,8 +165,12 @@ const RightSidebar: React.FC<SidebarProps> = ({
 
         {content === "hourplace" && (
           <div>
-            <h2 className="text-2xl font-bold mb-6">연동 플랫폼 관리</h2>
-
+            <div className="flex justify-between">
+              <h2 className="text-2xl font-bold mb-6">연동 플랫폼 관리</h2>
+              <button className="btn badge-lg text-white" onClick={onGetUpdate}>
+                기존 정보 불러오기
+              </button>
+            </div>
             {/* 스페이스 클라우드 계정 관리 */}
             <AccountSaveForm
               platform="스페이스 클라우드"
