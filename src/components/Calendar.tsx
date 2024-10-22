@@ -10,7 +10,6 @@ import ReservationCard from "./ReservationCard";
 import { useRecoilValue } from "recoil";
 import { userState } from "@/recoil/atoms";
 import Spinner from "./Spinner";
-import { OAuthRedirect } from "./OAuthRedirect";
 
 // 색상 배열
 const COLORS = [
@@ -79,6 +78,42 @@ const Calendar = () => {
       }, 300);
     }
   }, [isSidebarOpen, isLeftSidebarOpen]);
+
+  useEffect(() => {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1;
+    // 월별 데이터를 가져오는 POST 요청
+    fetchMonthlyDataMutation.mutate(
+      { year, month },
+      {
+        onSuccess: (postData) => {
+          console.log("월별 데이터 업데이트 완료: ", postData);
+          const updatedEvents = postData.contents.map((event: any) => {
+            const locationColor = getRandomColor();
+            const platformLogo = PLATFORM_LOGOS[event.platform] || "";
+            const startTime = new Date(event.startTime);
+            const endTime = new Date(event.endTime);
+            return {
+              title: event.location,
+              start: startTime,
+              end: endTime,
+              backgroundColor: locationColor,
+              textColor: "#000000",
+              extendedProps: { ...event },
+              platformLogo,
+            };
+          });
+          // 기존 이벤트와 병합하거나 새로운 이벤트로 설정
+          setEvents((prevEvents) => [...prevEvents, ...updatedEvents]);
+          console.log("이벤트 업데이트 완료");
+        },
+        onError: (error) => {
+          console.error("월별 데이터 업데이트 실패: ", error);
+        },
+      },
+    );
+  }, []);
 
   const handleSyncUpdate = () => {
     if (isSyncing) return;
