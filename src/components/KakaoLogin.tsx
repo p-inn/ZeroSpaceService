@@ -16,7 +16,7 @@ const KakaoLoginButton: React.FC = () => {
   return (
     <>
       <button
-        className="btn bg-yellow-200 w-full border-none"
+        className="btn bg-yellow-200 w-full border-none mb-2"
         onClick={handleKakaoLogin}
       >
         <p>카카오톡으로 3초만에 로그인</p>
@@ -25,7 +25,7 @@ const KakaoLoginButton: React.FC = () => {
         회원가입 시 제로스페이스의 이용약관 / 개인정보처리 방침에 동의하게
         됩니다.
         <a
-          className="link link-hover flex"
+          className="link link-hover flex align-middle"
           href="https://hickory-mandible-ea4.notion.site/127b5ea5a7df80bfa11bcefe37fa57f5"
         >
           약관보기 <BsChevronRight />

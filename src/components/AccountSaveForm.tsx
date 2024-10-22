@@ -45,7 +45,7 @@ const AccountSaveForm: React.FC<AccountSaveFormProps> = ({
 
       {success ? (
         <div className="w-full">
-          <p className="text-gray-500 font-semibold">{email}</p>
+          <p className="text-gray-500 font-semibold mb-2">{email}</p>
           <button
             className="btn w-full bg-white border border-gray-300 p-4 rounded-lg text-gray-500"
             onClick={() => setSuccess(false)}
