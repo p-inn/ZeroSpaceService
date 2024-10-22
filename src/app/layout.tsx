@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -32,6 +33,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
           />
         </main>
       </body>
+      {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_GA_ID && (
+        <GoogleAnalytics
+          gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_GA_ID}
+        />
+      )}
     </html>
   );
 }
