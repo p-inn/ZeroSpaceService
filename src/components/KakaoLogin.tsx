@@ -24,12 +24,12 @@ const KakaoLoginButton: React.FC = () => {
       <span className="text-gray-500 text-sm mt-2">
         회원가입 시 제로스페이스의 이용약관 / 개인정보처리 방침에 동의하게
         됩니다.
-        <a 
-        className="link link-hover"
-        href="https://hickory-mandible-ea4.notion.site/127b5ea5a7df80bfa11bcefe37fa57f5"
-      >
-        약관보기 <BsChevronRight />
-      </a>
+        <a
+          className="link link-hover"
+          href="https://hickory-mandible-ea4.notion.site/127b5ea5a7df80bfa11bcefe37fa57f5"
+        >
+          약관보기 <BsChevronRight />
+        </a>
       </span>
     </>
   );
